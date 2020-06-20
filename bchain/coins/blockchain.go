@@ -43,6 +43,7 @@ import (
 	"github.com/nbcorg/blockbook/bchain/coins/qtum"
 	"github.com/nbcorg/blockbook/bchain/coins/ravencoin"
 	"github.com/nbcorg/blockbook/bchain/coins/ritocoin"
+	"github.com/nbcorg/blockbook/bchain/coins/russianbitcoin"
 	"github.com/nbcorg/blockbook/bchain/coins/snowgem"
 	"github.com/nbcorg/blockbook/bchain/coins/unobtanium"
 	"github.com/nbcorg/blockbook/bchain/coins/vertcoin"
@@ -106,6 +107,7 @@ func init() {
 	BlockChainFactories["ZelCash"] = zec.NewZCashRPC
 	BlockChainFactories["Ravencoin"] = ravencoin.NewRavencoinRPC
 	BlockChainFactories["Ritocoin"] = ritocoin.NewRitocoinRPC
+	BlockChainFactories["RussianBitcoin"] = russianbitcoin.NewRussianBitcoinRPC
 	BlockChainFactories["Divi"] = divi.NewDiviRPC
 	BlockChainFactories["CPUchain"] = cpuchain.NewCPUchainRPC
 	BlockChainFactories["Unobtanium"] = unobtanium.NewUnobtaniumRPC
