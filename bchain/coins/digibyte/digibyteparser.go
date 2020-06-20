@@ -3,7 +3,7 @@ package digibyte
 import (
 	"github.com/nbcorg/btcd/wire"
 	"github.com/nbcorg/btcutil/chaincfg"
-	"github.com/trezor/blockbook/bchain/coins/btc"
+	"github.com/nbcorg/blockbook/bchain/coins/btc"
 )
 
 const (

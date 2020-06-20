@@ -1,4 +1,4 @@
-module github.com/trezor/blockbook
+module github.com/nbcorg/blockbook
 
 go 1.13
 
@@ -26,11 +26,11 @@ require (
 	github.com/juju/errors v0.0.0-20170703010042-c7d06af17c68
 	github.com/juju/loggo v0.0.0-20190526231331-6e530bcce5d8 // indirect
 	github.com/juju/testing v0.0.0-20191001232224-ce9dec17d28b // indirect
-	github.com/nbcorg/bchutil v0.0.0-20190104112650-6373f11b6efe
-	github.com/nbcorg/btcd v0.0.0-20200313230603-83af86142d93
-	github.com/nbcorg/btcutil v0.0.0-20200229134221-d7706467ae8f
 	github.com/martinboehm/golang-socketio v0.0.0-20180414165752-f60b0a8befde
 	github.com/mr-tron/base58 v1.1.3 // indirect
+	github.com/nbcorg/bchutil v0.0.0-20200620171704-c01a606a56bc
+	github.com/nbcorg/btcd v0.0.0-20200620171619-9e1965a8de98
+	github.com/nbcorg/btcutil v0.0.0-20200620172512-e758c7504543
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/pebbe/zmq4 v1.0.0
 	github.com/prometheus/client_golang v1.1.0

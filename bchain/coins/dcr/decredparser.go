@@ -17,9 +17,9 @@ import (
 	"github.com/nbcorg/btcd/wire"
 	"github.com/nbcorg/btcutil/base58"
 	"github.com/nbcorg/btcutil/chaincfg"
-	"github.com/trezor/blockbook/bchain"
-	"github.com/trezor/blockbook/bchain/coins/btc"
-	"github.com/trezor/blockbook/bchain/coins/utils"
+	"github.com/nbcorg/blockbook/bchain"
+	"github.com/nbcorg/blockbook/bchain/coins/btc"
+	"github.com/nbcorg/blockbook/bchain/coins/utils"
 )
 
 const (

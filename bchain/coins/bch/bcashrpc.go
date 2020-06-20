@@ -8,8 +8,8 @@ import (
 	"github.com/golang/glog"
 	"github.com/juju/errors"
 	"github.com/nbcorg/bchutil"
-	"github.com/trezor/blockbook/bchain"
-	"github.com/trezor/blockbook/bchain/coins/btc"
+	"github.com/nbcorg/blockbook/bchain"
+	"github.com/nbcorg/blockbook/bchain/coins/btc"
 )
 
 // BCashRPC is an interface to JSON-RPC bitcoind service.

@@ -15,7 +15,7 @@ import (
 	"github.com/nbcorg/btcutil/chaincfg"
 	"github.com/nbcorg/btcutil/hdkeychain"
 	"github.com/nbcorg/btcutil/txscript"
-	"github.com/trezor/blockbook/bchain"
+	"github.com/nbcorg/blockbook/bchain"
 )
 
 // OutputScriptToAddressesFunc converts ScriptPubKey to bitcoin addresses

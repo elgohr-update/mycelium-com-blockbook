@@ -3,9 +3,9 @@ package db
 import (
 	"github.com/golang/glog"
 	"github.com/juju/errors"
-	"github.com/trezor/blockbook/bchain"
-	"github.com/trezor/blockbook/bchain/coins/eth"
-	"github.com/trezor/blockbook/common"
+	"github.com/nbcorg/blockbook/bchain"
+	"github.com/nbcorg/blockbook/bchain/coins/eth"
+	"github.com/nbcorg/blockbook/common"
 )
 
 // TxCache is handle to TxCacheServer

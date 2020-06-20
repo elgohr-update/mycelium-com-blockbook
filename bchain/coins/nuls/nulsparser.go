@@ -11,8 +11,8 @@ import (
 	"github.com/nbcorg/btcutil/base58"
 	"github.com/nbcorg/btcutil/chaincfg"
 	"github.com/nbcorg/btcutil/hdkeychain"
-	"github.com/trezor/blockbook/bchain"
-	"github.com/trezor/blockbook/bchain/coins/btc"
+	"github.com/nbcorg/blockbook/bchain"
+	"github.com/nbcorg/blockbook/bchain/coins/btc"
 )
 
 // magic numbers

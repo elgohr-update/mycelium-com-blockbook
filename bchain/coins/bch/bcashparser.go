@@ -8,8 +8,8 @@ import (
 	"github.com/nbcorg/btcutil/chaincfg"
 	"github.com/nbcorg/btcutil/txscript"
 	"github.com/schancel/cashaddr-converter/address"
-	"github.com/trezor/blockbook/bchain"
-	"github.com/trezor/blockbook/bchain/coins/btc"
+	"github.com/nbcorg/blockbook/bchain"
+	"github.com/nbcorg/blockbook/bchain/coins/btc"
 )
 
 // AddressFormat type is used to specify different formats of address
