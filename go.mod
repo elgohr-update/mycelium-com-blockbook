@@ -28,9 +28,9 @@ require (
 	github.com/juju/testing v0.0.0-20191001232224-ce9dec17d28b // indirect
 	github.com/martinboehm/golang-socketio v0.0.0-20180414165752-f60b0a8befde
 	github.com/mr-tron/base58 v1.1.3 // indirect
-	github.com/nbcorg/bchutil v0.0.0-20200620171704-c01a606a56bc
-	github.com/nbcorg/btcd v0.0.0-20200620171619-9e1965a8de98
-	github.com/nbcorg/btcutil v0.0.0-20200620172512-e758c7504543
+	github.com/nbcorg/bchutil v0.0.0-20200620193011-8d8f21707974
+	github.com/nbcorg/btcd v0.0.0-20200620173908-cbe49b91730d
+	github.com/nbcorg/btcutil v0.0.0-20200620192523-f18f718f5892
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/pebbe/zmq4 v1.0.0
 	github.com/prometheus/client_golang v1.1.0
