@@ -5,9 +5,9 @@ import (
 
 	vlq "github.com/bsm/go-vlq"
 	"github.com/golang/glog"
-	"github.com/martinboehm/btcd/txscript"
-	"github.com/martinboehm/btcd/wire"
-	"github.com/martinboehm/btcutil/chaincfg"
+	"github.com/nbcorg/btcd/txscript"
+	"github.com/nbcorg/btcd/wire"
+	"github.com/nbcorg/btcutil/chaincfg"
 	"github.com/trezor/blockbook/bchain"
 	"github.com/trezor/blockbook/bchain/coins/btc"
 )

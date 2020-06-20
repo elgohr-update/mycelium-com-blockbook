@@ -16,7 +16,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/martinboehm/btcutil/chaincfg"
+	"github.com/nbcorg/btcutil/chaincfg"
 	"github.com/trezor/blockbook/bchain"
 	"github.com/trezor/blockbook/bchain/coins"
 	build "github.com/trezor/blockbook/build/tools"

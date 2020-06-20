@@ -3,10 +3,10 @@ package bch
 import (
 	"fmt"
 
-	"github.com/martinboehm/bchutil"
-	"github.com/martinboehm/btcutil"
-	"github.com/martinboehm/btcutil/chaincfg"
-	"github.com/martinboehm/btcutil/txscript"
+	"github.com/nbcorg/bchutil"
+	"github.com/nbcorg/btcutil"
+	"github.com/nbcorg/btcutil/chaincfg"
+	"github.com/nbcorg/btcutil/txscript"
 	"github.com/schancel/cashaddr-converter/address"
 	"github.com/trezor/blockbook/bchain"
 	"github.com/trezor/blockbook/bchain/coins/btc"

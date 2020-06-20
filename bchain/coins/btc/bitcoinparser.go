@@ -9,12 +9,12 @@ import (
 
 	vlq "github.com/bsm/go-vlq"
 	"github.com/juju/errors"
-	"github.com/martinboehm/btcd/blockchain"
-	"github.com/martinboehm/btcd/wire"
-	"github.com/martinboehm/btcutil"
-	"github.com/martinboehm/btcutil/chaincfg"
-	"github.com/martinboehm/btcutil/hdkeychain"
-	"github.com/martinboehm/btcutil/txscript"
+	"github.com/nbcorg/btcd/blockchain"
+	"github.com/nbcorg/btcd/wire"
+	"github.com/nbcorg/btcutil"
+	"github.com/nbcorg/btcutil/chaincfg"
+	"github.com/nbcorg/btcutil/hdkeychain"
+	"github.com/nbcorg/btcutil/txscript"
 	"github.com/trezor/blockbook/bchain"
 )
 

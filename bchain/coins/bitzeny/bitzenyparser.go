@@ -3,8 +3,8 @@ package bitzeny
 import (
 	"github.com/trezor/blockbook/bchain/coins/btc"
 
-	"github.com/martinboehm/btcd/wire"
-	"github.com/martinboehm/btcutil/chaincfg"
+	"github.com/nbcorg/btcd/wire"
+	"github.com/nbcorg/btcutil/chaincfg"
 )
 
 // magic numbers
