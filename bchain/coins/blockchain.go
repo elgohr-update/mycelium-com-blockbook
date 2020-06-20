@@ -28,7 +28,6 @@ import (
 	"github.com/nbcorg/blockbook/bchain/coins/flo"
 	"github.com/nbcorg/blockbook/bchain/coins/fujicoin"
 	"github.com/nbcorg/blockbook/bchain/coins/gamecredits"
-	"github.com/nbcorg/blockbook/bchain/coins/grs"
 	"github.com/nbcorg/blockbook/bchain/coins/koto"
 	"github.com/nbcorg/blockbook/bchain/coins/liquid"
 	"github.com/nbcorg/blockbook/bchain/coins/litecoin"
@@ -90,8 +89,6 @@ func init() {
 	BlockChainFactories["DigiByte Testnet"] = digibyte.NewDigiByteRPC
 	BlockChainFactories["Myriad"] = myriad.NewMyriadRPC
 	BlockChainFactories["Liquid"] = liquid.NewLiquidRPC
-	BlockChainFactories["Groestlcoin"] = grs.NewGroestlcoinRPC
-	BlockChainFactories["Groestlcoin Testnet"] = grs.NewGroestlcoinRPC
 	BlockChainFactories["PIVX"] = pivx.NewPivXRPC
 	BlockChainFactories["PIVX Testnet"] = pivx.NewPivXRPC
 	BlockChainFactories["Polis"] = polis.NewPolisRPC

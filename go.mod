@@ -30,7 +30,7 @@ require (
 	github.com/mr-tron/base58 v1.1.3 // indirect
 	github.com/nbcorg/bchutil v0.0.0-20200620193011-8d8f21707974
 	github.com/nbcorg/btcd v0.0.0-20200620211556-4c8a3c1fa313
-	github.com/nbcorg/btcutil v0.0.0-20200620210031-d58ab5dbe071
+	github.com/nbcorg/btcutil v0.0.0-20200620224435-69fe05f32072
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/pebbe/zmq4 v1.0.0
 	github.com/prometheus/client_golang v1.1.0
