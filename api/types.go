@@ -16,7 +16,7 @@ const maxUint32 = ^uint32(0)
 const maxInt = int(^uint(0) >> 1)
 const maxInt64 = int64(^uint64(0) >> 1)
 
-// AccountDetails specifies what data returns GetAddress and GetXpub calls
+// AccountDetails specifies what data returns GetAddress calls
 type AccountDetails int
 
 const (

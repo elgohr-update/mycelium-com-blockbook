@@ -46,7 +46,6 @@ The following methods are supported:
 - [Get transaction](#get-transaction)
 - [Get transaction specific](#get-transaction-specific)
 - [Get address](#get-address)
-- [Get xpub](#get-xpub)
 - [Get utxo](#get-utxo)
 - [Get block](#get-block)
 - [Send transaction](#send-transaction)
@@ -329,94 +328,16 @@ Response:
 }
 ```
 
-#### Get xpub
-
-Returns balances and transactions of an xpub, applicable only for Bitcoin-type coins. 
-
-Blockbook supports BIP44, BIP49 and BIP84 derivation schemes. It expects xpub at level 3 derivation path, i.e. *m/purpose'/coin_type'/account'/*. Blockbook completes the *change/address_index* part of the path when deriving addresses. 
-
-The BIP version is determined by the prefix of the xpub. The prefixes for each coin are defined by fields `xpub_magic`, `xpub_magic_segwit_p2sh`, `xpub_magic_segwit_native` in the [trezor-common](https://github.com/trezor/trezor-common/tree/master/defs/bitcoin) library. If the prefix is not recognized, Blockbook defaults to BIP44 derivation scheme.
-
-The returned transactions are sorted by block height, newest blocks first.
-
-```
-GET /api/v2/xpub/<xpub>[?page=<page>&pageSize=<size>&from=<block height>&to=<block height>&details=<basic|tokens|tokenBalances|txids|txs>&tokens=<nonzero|used|derived>]
-```
-
-The optional query parameters:
-- *page*: specifies page of returned transactions, starting from 1. If out of range, Blockbook returns the closest possible page.
-- *pageSize*: number of transactions returned by call (default and maximum 1000)
-- *from*, *to*: filter of the returned transactions *from* block height *to* block height (default no filter)
-- *details*: specifies level of details returned by request (default *txids*)
-    - *basic*: return only xpub balances, without any derived addresses and transactions
-    - *tokens*: *basic* + tokens (addresses) derived from the xpub, subject to *tokens* parameter
-    - *tokenBalances*: *basic* + tokens (addresses) derived from the xpub with balances, subject to *tokens* parameter
-    - *txids*: *tokenBalances* + list of txids, subject to  *from*, *to* filter and paging
-    - *txs*:  *tokenBalances* + list of transaction with details, subject to  *from*, *to* filter and paging
-- *tokens*: specifies what tokens (xpub addresses) are returned by the request (default *nonzero*)
-    - *nonzero*: return only addresses with nonzero balance
-    - *used*: return addresses with at least one transaction
-    - *derived*: return all derived addresses
-
-Response:
-
-```javascript
-{
-  "page": 1,
-  "totalPages": 1,
-  "itemsOnPage": 1000,
-  "address": "dgub8sbe5Mi8LA4dXB9zPfLZW8arm...9Vjp2HHx91xdDEmWYpmD49fpoUYF",
-  "balance": "0",
-  "totalReceived": "3083381250",
-  "totalSent": "3083381250",
-  "unconfirmedBalance": "0",
-  "unconfirmedTxs": 0,
-  "txs": 5,
-  "txids": [
-    "383ccb5da16fccad294e24a2ef77bdee5810573bb1b252d8b2af4f0ac8c4e04c",
-    "75fb93d47969ac92112628e39148ad22323e96f0004c18f8c75938cffb6c1798",
-    "e8cd84f204b4a42b98e535e72f461dd9832aa081458720b0a38db5856a884876",
-    "57833d50969208091bd6c950599a1b5cf9d66d992ae8a8d3560fb943b98ebb23",
-    "9cfd6295f20e74ddca6dd816c8eb71a91e4da70fe396aca6f8ce09dc2947839f",
-  ],
-  "usedTokens": 2,
-  "tokens": [
-    {
-      "type": "XPUBAddress",
-      "name": "DUCd1B3YBiXL5By15yXgSLZtEkvwsgEdqS",
-      "path": "m/44'/3'/0'/0/0",
-      "transfers": 3,
-      "decimals": 8,
-      "balance": "0",
-      "totalReceived": "2803986975",
-      "totalSent": "2803986975"
-    },
-    {
-      "type": "XPUBAddress",
-      "name": "DKu2a8Wo6zC2dmBBYXwUG3fxWDHbKnNiPj",
-      "path": "m/44'/3'/0'/1/0",
-      "transfers": 2,
-      "decimals": 8,
-      "balance": "0",
-      "totalReceived": "279394275",
-      "totalSent": "279394275"
-    }
-  ]
-}
-```
-
-Note: *usedTokens* always returns total number of **used** addresses of xpub.
-
 #### Get utxo
 
-Returns array of unspent transaction outputs of address or xpub, applicable only for Bitcoin-type coins. By default, the list contains both confirmed and unconfirmed transactions. The query parameter *confirmed=true* disables return of unconfirmed transactions. The returned utxos are sorted by block height, newest blocks first. For xpubs the response also contains address and derivation path of the utxo.
+Returns array of unspent transaction outputs of address, applicable only for Bitcoin-type coins. By default, the list contains both confirmed and unconfirmed transactions. The query parameter *confirmed=true* disables return of unconfirmed transactions. The returned utxos are sorted by block height, newest blocks first.
 
 Unconfirmed utxos do not have field *height*, the field *confirmations* has value *0* and may contain field *lockTime*, if not zero.
 
 Coinbase utxos do have field *coinbase* set to true, however due to performance reasons only up to minimum coinbase confirmations limit (100). After this limit, utxos are not detected as coinbase.
 
 ```
-GET /api/v2/utxo/<address|xpub>[?confirmed=true]
+GET /api/v2/utxo/<address>[?confirmed=true]
 ```
 
 Response:
@@ -652,10 +573,10 @@ Example error response (e.g. rate unavailable, incorrect currency...):
 
 #### Balance history
 
-Returns a balance history for the specified XPUB or address.
+Returns a balance history for the specified address.
 
 ```
-GET /api/v2/balancehistory/<XPUB | address>?from=<dateFrom>&to=<dateTo>[&fiatcurrency=<currency>&groupBy=<groupBySeconds>]
+GET /api/v2/balancehistory/<address>?from=<dateFrom>&to=<dateTo>[&fiatcurrency=<currency>&groupBy=<groupBySeconds>]
 ```
 
 Query parameters:
@@ -740,7 +661,7 @@ Example response (fiatcurrency=usd&groupBy=172800):
 ]
 ```
 
-The value of `sentToSelf` is the amount sent from the same address to the same address or within addresses of xpub.
+The value of `sentToSelf` is the amount sent from the same address to the same address or within addresses.
 
 ### Websocket API
 

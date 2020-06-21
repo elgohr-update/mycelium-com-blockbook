@@ -134,7 +134,6 @@ func (s *PublicServer) ConnectFullPublicInterface() {
 		// internal explorer handlers
 		serveMux.HandleFunc(path+"tx/", s.htmlTemplateHandler(s.explorerTx))
 		serveMux.HandleFunc(path+"address/", s.htmlTemplateHandler(s.explorerAddress))
-		serveMux.HandleFunc(path+"xpub/", s.htmlTemplateHandler(s.explorerXpub))
 		serveMux.HandleFunc(path+"search/", s.htmlTemplateHandler(s.explorerSearch))
 		serveMux.HandleFunc(path+"blocks", s.htmlTemplateHandler(s.explorerBlocks))
 		serveMux.HandleFunc(path+"block/", s.htmlTemplateHandler(s.explorerBlock))
@@ -170,7 +169,6 @@ func (s *PublicServer) ConnectFullPublicInterface() {
 	serveMux.HandleFunc(path+"api/tx-specific/", s.jsonHandler(s.apiTxSpecific, apiDefault))
 	serveMux.HandleFunc(path+"api/tx/", s.jsonHandler(s.apiTx, apiDefault))
 	serveMux.HandleFunc(path+"api/address/", s.jsonHandler(s.apiAddress, apiDefault))
-	serveMux.HandleFunc(path+"api/xpub/", s.jsonHandler(s.apiXpub, apiDefault))
 	serveMux.HandleFunc(path+"api/utxo/", s.jsonHandler(s.apiUtxo, apiDefault))
 	serveMux.HandleFunc(path+"api/block/", s.jsonHandler(s.apiBlock, apiDefault))
 	serveMux.HandleFunc(path+"api/sendtx/", s.jsonHandler(s.apiSendTx, apiDefault))
@@ -181,7 +179,6 @@ func (s *PublicServer) ConnectFullPublicInterface() {
 	serveMux.HandleFunc(path+"api/v2/tx-specific/", s.jsonHandler(s.apiTxSpecific, apiV2))
 	serveMux.HandleFunc(path+"api/v2/tx/", s.jsonHandler(s.apiTx, apiV2))
 	serveMux.HandleFunc(path+"api/v2/address/", s.jsonHandler(s.apiAddress, apiV2))
-	serveMux.HandleFunc(path+"api/v2/xpub/", s.jsonHandler(s.apiXpub, apiV2))
 	serveMux.HandleFunc(path+"api/v2/utxo/", s.jsonHandler(s.apiUtxo, apiV2))
 	serveMux.HandleFunc(path+"api/v2/block/", s.jsonHandler(s.apiBlock, apiV2))
 	serveMux.HandleFunc(path+"api/v2/sendtx/", s.jsonHandler(s.apiSendTx, apiV2))
@@ -396,7 +393,6 @@ const (
 	indexTpl
 	txTpl
 	addressTpl
-	xpubTpl
 	blocksTpl
 	blockTpl
 	sendTransactionTpl
@@ -494,7 +490,6 @@ func (s *PublicServer) parseTemplates() []*template.Template {
 		t[addressTpl] = createTemplate("./static/templates/address.html", "./static/templates/txdetail.html", "./static/templates/paging.html", "./static/templates/base.html")
 		t[blockTpl] = createTemplate("./static/templates/block.html", "./static/templates/txdetail.html", "./static/templates/paging.html", "./static/templates/base.html")
 	}
-	t[xpubTpl] = createTemplate("./static/templates/xpub.html", "./static/templates/txdetail.html", "./static/templates/paging.html", "./static/templates/base.html")
 	t[mempoolTpl] = createTemplate("./static/templates/mempool.html", "./static/templates/paging.html", "./static/templates/base.html")
 	return t
 }
@@ -530,21 +525,16 @@ func setTxToTemplateData(td *TemplateData, tx *api.Tx) *TemplateData {
 }
 
 // returns true if address is "own",
-// i.e. either the address of the address detail or belonging to the xpub
+// i.e. the address of the address detail
 func isOwnAddress(td *TemplateData, a string) bool {
 	if a == td.AddrStr {
 		return true
-	}
-	if td.Address != nil && td.Address.XPubAddresses != nil {
-		if _, found := td.Address.XPubAddresses[a]; found {
-			return true
-		}
 	}
 	return false
 }
 
 // returns true if addresses are "own",
-// i.e. either the address of the address detail or belonging to the xpub
+// i.e. the address of the address detail
 func isOwnAddresses(td *TemplateData, addresses []string) bool {
 	if len(addresses) == 1 {
 		return isOwnAddress(td, addresses[0])
@@ -688,38 +678,6 @@ func (s *PublicServer) explorerAddress(w http.ResponseWriter, r *http.Request) (
 	return addressTpl, data, nil
 }
 
-func (s *PublicServer) explorerXpub(w http.ResponseWriter, r *http.Request) (tpl, *TemplateData, error) {
-	var xpub string
-	i := strings.LastIndexByte(r.URL.Path, '/')
-	if i > 0 {
-		xpub = r.URL.Path[i+1:]
-	}
-	if len(xpub) == 0 {
-		return errorTpl, nil, api.NewAPIError("Missing xpub", true)
-	}
-	s.metrics.ExplorerViews.With(common.Labels{"action": "xpub"}).Inc()
-	page, _, _, filter, filterParam, gap := s.getAddressQueryParams(r, api.AccountDetailsTxHistoryLight, txsOnPage)
-	// do not allow txsOnPage and details to be changed by query params
-	address, err := s.api.GetXpubAddress(xpub, page, txsOnPage, api.AccountDetailsTxHistoryLight, filter, gap)
-	if err != nil {
-		if err == api.ErrUnsupportedXpub {
-			err = api.NewAPIError("XPUB functionality is not supported", true)
-		}
-		return errorTpl, nil, err
-	}
-	data := s.newTemplateData()
-	data.AddrStr = address.AddrStr
-	data.Address = address
-	data.Page = address.Page
-	data.PagingRange, data.PrevPage, data.NextPage = getPagingRange(address.Page, address.TotalPages)
-	if filterParam != "" {
-		data.PageParams = template.URL("&filter=" + filterParam)
-		data.Address.Filter = filterParam
-	}
-	data.NonZeroBalanceTokens = filter.TokensToReturn == api.TokensToReturnNonzeroBalance
-	return xpubTpl, data, nil
-}
-
 func (s *PublicServer) explorerBlocks(w http.ResponseWriter, r *http.Request) (tpl, *TemplateData, error) {
 	var blocks *api.Blocks
 	var err error
@@ -781,11 +739,6 @@ func (s *PublicServer) explorerSearch(w http.ResponseWriter, r *http.Request) (t
 	var err error
 	s.metrics.ExplorerViews.With(common.Labels{"action": "search"}).Inc()
 	if len(q) > 0 {
-		address, err = s.api.GetXpubAddress(q, 0, 1, api.AccountDetailsBasic, &api.AddressFilter{Vout: api.AddressFilterVoutOff}, 0)
-		if err == nil {
-			http.Redirect(w, r, joinURL("/xpub/", address.AddrStr), 302)
-			return noTpl, nil, nil
-		}
 		block, err = s.api.GetBlock(q, 0, 1)
 		if err == nil {
 			http.Redirect(w, r, joinURL("/block/", block.Hash), 302)
@@ -998,29 +951,6 @@ func (s *PublicServer) apiAddress(r *http.Request, apiVersion int) (interface{},
 	return address, err
 }
 
-func (s *PublicServer) apiXpub(r *http.Request, apiVersion int) (interface{}, error) {
-	var xpub string
-	i := strings.LastIndexByte(r.URL.Path, '/')
-	if i > 0 {
-		xpub = r.URL.Path[i+1:]
-	}
-	if len(xpub) == 0 {
-		return nil, api.NewAPIError("Missing xpub", true)
-	}
-	var address *api.Address
-	var err error
-	s.metrics.ExplorerViews.With(common.Labels{"action": "api-xpub"}).Inc()
-	page, pageSize, details, filter, _, gap := s.getAddressQueryParams(r, api.AccountDetailsTxidHistory, txsInAPI)
-	address, err = s.api.GetXpubAddress(xpub, page, pageSize, details, filter, gap)
-	if err == nil && apiVersion == apiV1 {
-		return s.api.AddressToV1(address), nil
-	}
-	if err == api.ErrUnsupportedXpub {
-		err = api.NewAPIError("XPUB functionality is not supported", true)
-	}
-	return address, err
-}
-
 func (s *PublicServer) apiUtxo(r *http.Request, apiVersion int) (interface{}, error) {
 	var utxo []api.Utxo
 	var err error
@@ -1033,17 +963,8 @@ func (s *PublicServer) apiUtxo(r *http.Request, apiVersion int) (interface{}, er
 				return nil, api.NewAPIError("Parameter 'confirmed' cannot be converted to boolean", true)
 			}
 		}
-		gap, ec := strconv.Atoi(r.URL.Query().Get("gap"))
-		if ec != nil {
-			gap = 0
-		}
-		utxo, err = s.api.GetXpubUtxo(r.URL.Path[i+1:], onlyConfirmed, gap)
-		if err == nil {
-			s.metrics.ExplorerViews.With(common.Labels{"action": "api-xpub-utxo"}).Inc()
-		} else {
-			utxo, err = s.api.GetAddressUtxo(r.URL.Path[i+1:], onlyConfirmed)
-			s.metrics.ExplorerViews.With(common.Labels{"action": "api-address-utxo"}).Inc()
-		}
+		utxo, err = s.api.GetAddressUtxo(r.URL.Path[i+1:], onlyConfirmed)
+		s.metrics.ExplorerViews.With(common.Labels{"action": "api-address-utxo"}).Inc()
 		if err == nil && apiVersion == apiV1 {
 			return s.api.AddressUtxoToV1(utxo), nil
 		}
@@ -1056,10 +977,6 @@ func (s *PublicServer) apiBalanceHistory(r *http.Request, apiVersion int) (inter
 	var fromTimestamp, toTimestamp int64
 	var err error
 	if i := strings.LastIndexByte(r.URL.Path, '/'); i > 0 {
-		gap, ec := strconv.Atoi(r.URL.Query().Get("gap"))
-		if ec != nil {
-			gap = 0
-		}
 		from := r.URL.Query().Get("from")
 		if from != "" {
 			fromTimestamp, err = strconv.ParseInt(from, 10, 64)
@@ -1084,13 +1001,8 @@ func (s *PublicServer) apiBalanceHistory(r *http.Request, apiVersion int) (inter
 		if fiat != "" {
 			fiatArray = []string{fiat}
 		}
-		history, err = s.api.GetXpubBalanceHistory(r.URL.Path[i+1:], fromTimestamp, toTimestamp, fiatArray, gap, uint32(groupBy))
-		if err == nil {
-			s.metrics.ExplorerViews.With(common.Labels{"action": "api-xpub-balancehistory"}).Inc()
-		} else {
-			history, err = s.api.GetBalanceHistory(r.URL.Path[i+1:], fromTimestamp, toTimestamp, fiatArray, uint32(groupBy))
-			s.metrics.ExplorerViews.With(common.Labels{"action": "api-address-balancehistory"}).Inc()
-		}
+		history, err = s.api.GetBalanceHistory(r.URL.Path[i+1:], fromTimestamp, toTimestamp, fiatArray, uint32(groupBy))
+		s.metrics.ExplorerViews.With(common.Labels{"action": "api-address-balancehistory"}).Inc()
 	}
 	return history, err
 }

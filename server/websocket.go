@@ -277,10 +277,7 @@ var requestHandlers = map[string]func(*WebsocketServer, *websocketChannel, *webs
 			if r.GroupBy <= 0 {
 				r.GroupBy = 3600
 			}
-			rv, err = s.api.GetXpubBalanceHistory(r.Descriptor, r.From, r.To, r.Currencies, r.Gap, r.GroupBy)
-			if err != nil {
-				rv, err = s.api.GetBalanceHistory(r.Descriptor, r.From, r.To, r.Currencies, r.GroupBy)
-			}
+			rv, err = s.api.GetBalanceHistory(r.Descriptor, r.From, r.To, r.Currencies, r.GroupBy)
 		}
 		return
 	},
@@ -489,19 +486,11 @@ func (s *WebsocketServer) getAccountInfo(req *accountInfoReq) (res *api.Address,
 	if req.PageSize == 0 {
 		req.PageSize = txsOnPage
 	}
-	a, err := s.api.GetXpubAddress(req.Descriptor, req.Page, req.PageSize, opt, &filter, req.Gap)
-	if err != nil {
-		return s.api.GetAddress(req.Descriptor, req.Page, req.PageSize, opt, &filter)
-	}
-	return a, nil
+	return s.api.GetAddress(req.Descriptor, req.Page, req.PageSize, opt, &filter)
 }
 
 func (s *WebsocketServer) getAccountUtxo(descriptor string) (interface{}, error) {
-	utxo, err := s.api.GetXpubUtxo(descriptor, false, 0)
-	if err != nil {
-		return s.api.GetAddressUtxo(descriptor, false)
-	}
-	return utxo, nil
+	return s.api.GetAddressUtxo(descriptor, false)
 }
 
 func (s *WebsocketServer) getTransaction(txid string) (interface{}, error) {
