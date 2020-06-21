@@ -8,12 +8,10 @@ import (
 	"strconv"
 
 	vlq "github.com/bsm/go-vlq"
-	"github.com/juju/errors"
 	"github.com/nbcorg/btcd/blockchain"
 	"github.com/nbcorg/btcd/wire"
 	"github.com/nbcorg/btcutil"
 	"github.com/nbcorg/btcutil/chaincfg"
-	"github.com/nbcorg/btcutil/hdkeychain"
 	"github.com/nbcorg/btcutil/txscript"
 	"github.com/nbcorg/blockbook/bchain"
 )
@@ -331,105 +329,4 @@ func (p *BitcoinParser) UnpackTx(buf []byte) (*bchain.Tx, uint32, error) {
 // MinimumCoinbaseConfirmations returns minimum number of confirmations a coinbase transaction must have before it can be spent
 func (p *BitcoinParser) MinimumCoinbaseConfirmations() int {
 	return p.minimumCoinbaseConfirmations
-}
-
-func (p *BitcoinParser) addrDescFromExtKey(extKey *hdkeychain.ExtendedKey) (bchain.AddressDescriptor, error) {
-	var a btcutil.Address
-	var err error
-	if extKey.Version() == p.XPubMagicSegwitP2sh {
-		// redeemScript <witness version: OP_0><len pubKeyHash: 20><20-byte-pubKeyHash>
-		pubKeyHash := btcutil.Hash160(extKey.PubKeyBytes())
-		redeemScript := make([]byte, len(pubKeyHash)+2)
-		redeemScript[0] = 0
-		redeemScript[1] = byte(len(pubKeyHash))
-		copy(redeemScript[2:], pubKeyHash)
-		hash := btcutil.Hash160(redeemScript)
-		a, err = btcutil.NewAddressScriptHashFromHash(hash, p.Params)
-	} else if extKey.Version() == p.XPubMagicSegwitNative {
-		a, err = btcutil.NewAddressWitnessPubKeyHash(btcutil.Hash160(extKey.PubKeyBytes()), p.Params)
-	} else {
-		// default to P2PKH address
-		a, err = extKey.Address(p.Params)
-	}
-	if err != nil {
-		return nil, err
-	}
-	return txscript.PayToAddrScript(a)
-}
-
-// DeriveAddressDescriptors derives address descriptors from given xpub for listed indexes
-func (p *BitcoinParser) DeriveAddressDescriptors(xpub string, change uint32, indexes []uint32) ([]bchain.AddressDescriptor, error) {
-	extKey, err := hdkeychain.NewKeyFromString(xpub, p.Params.Base58CksumHasher)
-	if err != nil {
-		return nil, err
-	}
-	changeExtKey, err := extKey.Child(change)
-	if err != nil {
-		return nil, err
-	}
-	ad := make([]bchain.AddressDescriptor, len(indexes))
-	for i, index := range indexes {
-		indexExtKey, err := changeExtKey.Child(index)
-		if err != nil {
-			return nil, err
-		}
-		ad[i], err = p.addrDescFromExtKey(indexExtKey)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return ad, nil
-}
-
-// DeriveAddressDescriptorsFromTo derives address descriptors from given xpub for addresses in index range
-func (p *BitcoinParser) DeriveAddressDescriptorsFromTo(xpub string, change uint32, fromIndex uint32, toIndex uint32) ([]bchain.AddressDescriptor, error) {
-	if toIndex <= fromIndex {
-		return nil, errors.New("toIndex<=fromIndex")
-	}
-	extKey, err := hdkeychain.NewKeyFromString(xpub, p.Params.Base58CksumHasher)
-	if err != nil {
-		return nil, err
-	}
-	changeExtKey, err := extKey.Child(change)
-	if err != nil {
-		return nil, err
-	}
-	ad := make([]bchain.AddressDescriptor, toIndex-fromIndex)
-	for index := fromIndex; index < toIndex; index++ {
-		indexExtKey, err := changeExtKey.Child(index)
-		if err != nil {
-			return nil, err
-		}
-		ad[index-fromIndex], err = p.addrDescFromExtKey(indexExtKey)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return ad, nil
-}
-
-// DerivationBasePath returns base path of xpub
-func (p *BitcoinParser) DerivationBasePath(xpub string) (string, error) {
-	extKey, err := hdkeychain.NewKeyFromString(xpub, p.Params.Base58CksumHasher)
-	if err != nil {
-		return "", err
-	}
-	var c, bip string
-	cn := extKey.ChildNum()
-	if cn >= 0x80000000 {
-		cn -= 0x80000000
-		c = "'"
-	}
-	c = strconv.Itoa(int(cn)) + c
-	if extKey.Depth() != 3 {
-		return "unknown/" + c, nil
-	}
-	if extKey.Version() == p.XPubMagicSegwitP2sh {
-		bip = "49"
-	} else if extKey.Version() == p.XPubMagicSegwitNative {
-		bip = "84"
-	} else {
-		bip = "44"
-	}
-	return "m/" + bip + "'/" + strconv.Itoa(int(p.Slip44)) + "'/" + c, nil
 }

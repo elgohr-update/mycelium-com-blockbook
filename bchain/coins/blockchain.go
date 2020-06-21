@@ -19,7 +19,6 @@ import (
 	"github.com/nbcorg/blockbook/bchain/coins/btg"
 	"github.com/nbcorg/blockbook/bchain/coins/cpuchain"
 	"github.com/nbcorg/blockbook/bchain/coins/dash"
-	"github.com/nbcorg/blockbook/bchain/coins/dcr"
 	"github.com/nbcorg/blockbook/bchain/coins/deeponion"
 	"github.com/nbcorg/blockbook/bchain/coins/digibyte"
 	"github.com/nbcorg/blockbook/bchain/coins/divi"
@@ -71,8 +70,6 @@ func init() {
 	BlockChainFactories["Bgold"] = btg.NewBGoldRPC
 	BlockChainFactories["Dash"] = dash.NewDashRPC
 	BlockChainFactories["Dash Testnet"] = dash.NewDashRPC
-	BlockChainFactories["Decred"] = dcr.NewDecredRPC
-	BlockChainFactories["Decred Testnet"] = dcr.NewDecredRPC
 	BlockChainFactories["GameCredits"] = gamecredits.NewGameCreditsRPC
 	BlockChainFactories["Koto"] = koto.NewKotoRPC
 	BlockChainFactories["Koto Testnet"] = koto.NewKotoRPC
