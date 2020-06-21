@@ -5,12 +5,4 @@ blockbook
 notes.txt
 debug*
 .vscode
-docker/blockbook
-build/pkg-defs
-build/blockbook
-build/ldb
-build/sst_dump
-build/*.deb
-.bin-image
-.deb-image
 \.idea/
