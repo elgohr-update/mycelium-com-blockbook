@@ -24,7 +24,6 @@ type BitcoinParser struct {
 	*bchain.BaseParser
 	Params                       *chaincfg.Params
 	OutputScriptToAddressesFunc  OutputScriptToAddressesFunc
-	Slip44                       uint32
 	minimumCoinbaseConfirmations int
 }
 
@@ -36,7 +35,6 @@ func NewBitcoinParser(params *chaincfg.Params, c *Configuration) *BitcoinParser 
 			AmountDecimalPoint:   8,
 		},
 		Params:                       params,
-		Slip44:                       c.Slip44,
 		minimumCoinbaseConfirmations: c.MinimumCoinbaseConfirmations,
 	}
 	p.OutputScriptToAddressesFunc = p.outputScriptToAddresses

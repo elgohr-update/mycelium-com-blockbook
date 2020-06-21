@@ -25,10 +25,6 @@ type trezorCommonDef struct {
 	Name                  string `json:"coin_name"`
 	Shortcut              string `json:"coin_shortcut"`
 	Label                 string `json:"coin_label"`
-	XPubMagic             uint32 `json:"xpub_magic"`
-	XPubMagicSegwitP2sh   uint32 `json:"xpub_magic_segwit_p2sh"`
-	XPubMagicSegwitNative uint32 `json:"xpub_magic_segwit_native"`
-	Slip44                uint32 `json:"slip44,omitempty"`
 }
 
 func getTrezorCommonDef(coin string) (*trezorCommonDef, error) {
@@ -101,18 +97,6 @@ func main() {
 				}
 				if tcd.Label != "" {
 					config.Coin.Label = tcd.Label
-				}
-				if tcd.XPubMagic != 0 {
-					config.Blockbook.BlockChain.XPubMagic = tcd.XPubMagic
-				}
-				if tcd.XPubMagicSegwitP2sh != 0 {
-					config.Blockbook.BlockChain.XPubMagicSegwitP2sh = tcd.XPubMagicSegwitP2sh
-				}
-				if tcd.XPubMagicSegwitNative != 0 {
-					config.Blockbook.BlockChain.XPubMagicSegwitNative = tcd.XPubMagicSegwitNative
-				}
-				if tcd.Slip44 != 0 {
-					config.Blockbook.BlockChain.Slip44 = tcd.Slip44
 				}
 				err = writeConfig(coin, config)
 				if err == nil {

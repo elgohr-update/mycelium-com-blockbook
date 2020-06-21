@@ -55,9 +55,6 @@
       "mempool_workers": 8,
       "mempool_sub_workers": 2,
       "block_addresses_to_keep": 300,
-      "xpub_magic": 76067358,
-      "xpub_magic_segwit_p2sh": 77429938,
-      "xpub_magic_segwit_native": 78792518,
       "additional_params": {
         "alternative_estimate_fee": "whatthefee-disabled",
         "alternative_estimate_fee_params": "{\"url\": \"https://whatthefee.io/data.json\", \"periodSeconds\": 60}",

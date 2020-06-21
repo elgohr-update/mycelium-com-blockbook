@@ -52,7 +52,6 @@ type Configuration struct {
 	AddressFormat                string `json:"address_format"`
 	SupportsEstimateFee          bool   `json:"supports_estimate_fee"`
 	SupportsEstimateSmartFee     bool   `json:"supports_estimate_smart_fee"`
-	Slip44                       uint32 `json:"slip44,omitempty"`
 	AlternativeEstimateFee       string `json:"alternative_estimate_fee,omitempty"`
 	AlternativeEstimateFeeParams string `json:"alternative_estimate_fee_params,omitempty"`
 	MinimumCoinbaseConfirmations int    `json:"minimumCoinbaseConfirmations,omitempty"`
