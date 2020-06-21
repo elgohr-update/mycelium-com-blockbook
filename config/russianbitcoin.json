@@ -1,0 +1,21 @@
+{
+    "alternative_estimate_fee": "disabled",
+    "alternative_estimate_fee_params": "{\"url\": \"https://api.hostname.com/data.json\", \"periodSeconds\": 60}",
+    "fiat_rates": "disabled",
+    "fiat_rates_params": "{\"url\": \"https://api.hostname.com/api/v3\", \"coin\": \"russianbitcoin\", \"periodSeconds\": 60}",
+    "coin_name": "Russian Bitcoin",
+    "coin_shortcut": "RUBTC",
+    "coin_label": "Russian Bitcoin",
+    "rpc_url": "http://127.0.0.1:7332",
+    "rpc_user": "rpcuser",
+    "rpc_pass": "rpcpassword",
+    "rpc_timeout": 25,
+    "parse": true,
+    "message_queue_binding": "tcp://127.0.0.1:10000",
+    "subversion": "",
+    "address_format": "",
+
+    "mempool_workers": 8,
+    "mempool_sub_workers": 2,
+    "block_addresses_to_keep": 300
+}

@@ -12,7 +12,6 @@ import (
 	"github.com/juju/errors"
 	"github.com/nbcorg/blockbook/bchain"
 	"github.com/nbcorg/blockbook/bchain/coins/btc"
-	"github.com/nbcorg/blockbook/bchain/coins/russianbitcoin"
 	"github.com/nbcorg/blockbook/common"
 )
 
@@ -22,8 +21,9 @@ type blockChainFactory func(config json.RawMessage, pushHandler func(bchain.Noti
 var BlockChainFactories = make(map[string]blockChainFactory)
 
 func init() {
-	BlockChainFactories["Bitcoin"] = btc.NewBitcoinRPC
-	BlockChainFactories["RussianBitcoin"] = russianbitcoin.NewRussianBitcoinRPC
+	BlockChainFactories["Russian Bitcoin"] = btc.NewBitcoinRPC
+	BlockChainFactories["TestNet"] = btc.NewBitcoinRPC
+	BlockChainFactories["Regtest"] = btc.NewBitcoinRPC
 }
 
 // GetCoinNameFromConfig gets coin name and coin shortcut from config file

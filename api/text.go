@@ -14,7 +14,7 @@ var Text struct {
 }
 
 func init() {
-	box := packr.NewBox("../build/text")
+	box := packr.NewBox("../config/text")
 	if about, err := box.MustString("about"); err == nil {
 		Text.BlockbookAbout = strings.TrimSpace(about)
 	} else {

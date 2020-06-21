@@ -711,7 +711,7 @@ func initFiatRatesDownloader(db *db.RocksDB, configfile string) {
 		return
 	}
 
-	if config.FiatRates == "" || config.FiatRatesParams == "" {
+	if config.FiatRates == "disabled" || config.FiatRates == "" || config.FiatRatesParams == "" {
 		glog.Infof("FiatRates config (%v) is empty, so the functionality is disabled.", configfile)
 	} else {
 		fiatRates, err := fiat.NewFiatRatesDownloader(db, config.FiatRates, config.FiatRatesParams, nil, onNewFiatRatesTicker)

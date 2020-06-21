@@ -16,6 +16,40 @@ import (
 	"github.com/nbcorg/blockbook/bchain"
 )
 
+// magic numbers
+const (
+	MainnetMagic wire.BitcoinNet = 0xd8b4bef8
+	TestnetMagic wire.BitcoinNet = 0x0809110c
+	RegtestMagic wire.BitcoinNet = 0xdbd5bffb
+)
+
+// chain parameters
+var (
+	MainNetParams chaincfg.Params
+	TestNetParams chaincfg.Params
+	RegtestParams chaincfg.Params
+)
+
+func init() {
+	MainNetParams = chaincfg.MainNetParams
+	MainNetParams.Net = MainnetMagic
+	MainNetParams.PubKeyHashAddrID = []byte{102}
+	MainNetParams.ScriptHashAddrID = []byte{11}
+	MainNetParams.Bech32HRPSegwit = "rubtcm"
+
+	TestNetParams = chaincfg.TestNet3Params
+	TestNetParams.Net = TestnetMagic
+	TestNetParams.PubKeyHashAddrID = []byte{105}
+	TestNetParams.ScriptHashAddrID = []byte{13}
+	TestNetParams.Bech32HRPSegwit = "rubtct"
+
+	RegtestParams = chaincfg.RegressionNetParams
+	RegtestParams.Net = RegtestMagic
+	RegtestParams.PubKeyHashAddrID = []byte{105}
+	RegtestParams.ScriptHashAddrID = []byte{13}
+	RegtestParams.Bech32HRPSegwit = "rubtct"
+}
+
 // OutputScriptToAddressesFunc converts ScriptPubKey to bitcoin addresses
 type OutputScriptToAddressesFunc func(script []byte) ([]string, bool, error)
 
@@ -41,20 +75,28 @@ func NewBitcoinParser(params *chaincfg.Params, c *Configuration) *BitcoinParser 
 	return p
 }
 
-// GetChainParams contains network parameters for the main Bitcoin network,
-// the regression test Bitcoin network, the test Bitcoin network and
-// the simulation test Bitcoin network, in this order
+// GetChainParams contains network parameters for the main Russian Bitcoin network,
+// the regression test Russian Bitcoin network and the test Bitcoin network and
 func GetChainParams(chain string) *chaincfg.Params {
-	if !chaincfg.IsRegistered(&chaincfg.MainNetParams) {
-		chaincfg.RegisterBitcoinParams()
+	if !chaincfg.IsRegistered(&MainNetParams) {
+		err := chaincfg.Register(&MainNetParams)
+		if err == nil {
+			err = chaincfg.Register(&TestNetParams)
+		}
+		if err == nil {
+			err = chaincfg.Register(&RegtestParams)
+		}
+		if err != nil {
+			panic(err)
+		}
 	}
 	switch chain {
 	case "test":
-		return &chaincfg.TestNet3Params
+		return &TestNetParams
 	case "regtest":
-		return &chaincfg.RegressionNetParams
+		return &RegtestParams
 	}
-	return &chaincfg.MainNetParams
+	return &MainNetParams
 }
 
 // GetAddrDescFromVout returns internal address representation (descriptor) of given transaction output
