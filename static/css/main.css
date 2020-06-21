@@ -210,6 +210,7 @@ h3 {
 
 .ellipsis {
     overflow: hidden;
+    font-family: monospace, monospace;
     text-overflow: ellipsis;
     white-space: nowrap;
 }

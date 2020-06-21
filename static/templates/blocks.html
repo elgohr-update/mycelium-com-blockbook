@@ -9,16 +9,16 @@
             <tr>
                 <th style="width: 10%;">Height</th>
                 <th style="width: 48%;">Hash</th>
-                <th>Timestamp</span></th>
-                <th class="text-right" style="width: 10%;">Transactions</th>
-                <th class="text-right" style="width: 10%;">Size</th>
+                <th>Time</span></th>
+                <th class="text-right" style="width: 10%;">Tx Count</th>
+                <th class="text-right" style="width: 10%;">Size (B)</th>
             </tr>
         </thead>
         <tbody>
             {{- range $b := $blocks.Blocks -}}
             <tr>
                 <td><a href="/block/{{$b.Height}}">{{$b.Height}}</a></td>
-                <td class="ellipsis">{{$b.Hash}}</td>
+                <td class="ellipsis"><a title="{{$b.Hash}}" href="/block/{{$b.Hash}}">{{$b.PrintHash}}</a></td>
                 <td>{{formatUnixTime $b.Time}}</td>
                 <td class="text-right">{{$b.Txs}}</td>
                 <td class="text-right">{{$b.Size}}</td>
