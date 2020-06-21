@@ -1,5 +1,5 @@
 {{define "specific"}}{{$cs := .CoinShortcut}}{{$addr := .Address}}{{$data := .}}
-<h1>{{if $addr.Erc20Contract}}Contract {{$addr.Erc20Contract.Name}} ({{$addr.Erc20Contract.Symbol}}){{else}}Address{{end}} <small class="text-muted">{{formatAmount $addr.BalanceSat}} {{$cs}}</small>
+<h1>Address <small class="text-muted">{{formatAmount $addr.BalanceSat}} {{$cs}}</small>
 </h1>
 <div class="alert alert-data ellipsis">
     <span class="data">{{$addr.AddrStr}}</span>
@@ -9,48 +9,6 @@
     <div class="col-lg-10">
         <table class="table data-table">
             <tbody>
-                {{- if eq .ChainType 1 -}}
-                <tr>
-                    <td style="width: 25%;">Balance</td>
-                    <td class="data">{{formatAmount $addr.BalanceSat}} {{$cs}}</td>
-                </tr>
-                <tr>
-                    <td>Transactions</td>
-                    <td class="data">{{$addr.Txs}}</td>
-                </tr>
-                <tr>
-                    <td>Non-contract Transactions</td>
-                    <td class="data">{{$addr.NonTokenTxs}}</td>
-                </tr>
-                <tr>
-                    <td>Nonce</td>
-                    <td class="data">{{$addr.Nonce}}</td>
-                </tr>
-                {{- if $addr.Tokens -}}
-                <tr>
-                    <td>ERC20 Tokens</td>
-                    <td style="padding: 0;">
-                        <table class="table data-table">
-                            <tbody>
-                                <tr>
-                                    <th>Contract</th>
-                                    <th>Tokens</th>
-                                    <th style="width: 15%;">Transfers</th>
-                                </tr>
-                                {{- range $t := $addr.Tokens -}}
-                                <tr>
-                                    <td class="data ellipsis">{{if $t.Contract}}<a href="/address/{{$t.Contract}}">{{$t.Name}}</a>{{else}}{{$t.Name}}{{end}}</td>
-                                    <td class="data">{{formatAmountWithDecimals $t.BalanceSat $t.Decimals}} {{$t.Symbol}}</td>
-                                    <td class="data">{{$t.Transfers}}</td>
-                                </tr>
-                                {{- end -}}
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                {{- end -}}
-                </tr>
-                {{- else -}}
                 <tr>
                     <td style="width: 25%;">Total Received</td>
                     <td class="data">{{formatAmount $addr.TotalReceivedSat}} {{$cs}}</td>
@@ -67,7 +25,6 @@
                     <td>No. Transactions</td>
                     <td class="data">{{$addr.Txs}}</td>
                 </tr>
-                {{- end -}}
             </tbody>
         </table>
     </div>

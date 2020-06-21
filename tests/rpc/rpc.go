@@ -214,23 +214,11 @@ func normalizeAddresses(tx *bchain.Tx, parser bchain.BlockChainParser) {
 	for i := range tx.Vin {
 		if len(tx.Vin[i].Addresses) == 0 {
 			tx.Vin[i].Addresses = nil
-		} else {
-			if parser.GetChainType() == bchain.ChainEthereumType {
-				for j := range tx.Vin[i].Addresses {
-					tx.Vin[i].Addresses[j] = strings.ToLower(tx.Vin[i].Addresses[j])
-				}
-			}
 		}
 	}
 	for i := range tx.Vout {
 		if len(tx.Vout[i].ScriptPubKey.Addresses) == 0 {
 			tx.Vout[i].ScriptPubKey.Addresses = nil
-		} else {
-			if parser.GetChainType() == bchain.ChainEthereumType {
-				for j := range tx.Vout[i].ScriptPubKey.Addresses {
-					tx.Vout[i].ScriptPubKey.Addresses[j] = strings.ToLower(tx.Vout[i].ScriptPubKey.Addresses[j])
-				}
-			}
 		}
 	}
 }

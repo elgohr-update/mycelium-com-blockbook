@@ -24,9 +24,6 @@ type BitcoinParser struct {
 	*bchain.BaseParser
 	Params                       *chaincfg.Params
 	OutputScriptToAddressesFunc  OutputScriptToAddressesFunc
-	XPubMagic                    uint32
-	XPubMagicSegwitP2sh          uint32
-	XPubMagicSegwitNative        uint32
 	Slip44                       uint32
 	minimumCoinbaseConfirmations int
 }
@@ -39,9 +36,6 @@ func NewBitcoinParser(params *chaincfg.Params, c *Configuration) *BitcoinParser 
 			AmountDecimalPoint:   8,
 		},
 		Params:                       params,
-		XPubMagic:                    c.XPubMagic,
-		XPubMagicSegwitP2sh:          c.XPubMagicSegwitP2sh,
-		XPubMagicSegwitNative:        c.XPubMagicSegwitNative,
 		Slip44:                       c.Slip44,
 		minimumCoinbaseConfirmations: c.MinimumCoinbaseConfirmations,
 	}

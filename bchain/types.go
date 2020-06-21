@@ -17,8 +17,6 @@ type ChainType int
 const (
 	// ChainBitcoinType is blockchain derived from bitcoin
 	ChainBitcoinType = ChainType(iota)
-	// ChainEthereumType is blockchain derived from ethereum
-	ChainEthereumType
 )
 
 // errors with specific meaning returned by blockchain rpc
@@ -109,7 +107,6 @@ type MempoolTx struct {
 	Vin              []MempoolVin    `json:"vin"`
 	Vout             []Vout          `json:"vout"`
 	Blocktime        int64           `json:"blocktime,omitempty"`
-	Erc20            []Erc20Transfer `json:"-"`
 	CoinSpecificData interface{}     `json:"-"`
 }
 
@@ -199,24 +196,6 @@ func AddressDescriptorFromString(s string) (AddressDescriptor, error) {
 	return nil, errors.New("Not AddressDescriptor")
 }
 
-// EthereumType specific
-
-// Erc20Contract contains info about ERC20 contract
-type Erc20Contract struct {
-	Contract string `json:"contract"`
-	Name     string `json:"name"`
-	Symbol   string `json:"symbol"`
-	Decimals int    `json:"decimals"`
-}
-
-// Erc20Transfer contains a single ERC20 token transfer
-type Erc20Transfer struct {
-	Contract string
-	From     string
-	To       string
-	Tokens   big.Int
-}
-
 // MempoolTxidEntry contains mempool txid with first seen time
 type MempoolTxidEntry struct {
 	Txid string
@@ -272,12 +251,6 @@ type BlockChain interface {
 	GetMempoolEntry(txid string) (*MempoolEntry, error)
 	// parser
 	GetChainParser() BlockChainParser
-	// EthereumType specific
-	EthereumTypeGetBalance(addrDesc AddressDescriptor) (*big.Int, error)
-	EthereumTypeGetNonce(addrDesc AddressDescriptor) (uint64, error)
-	EthereumTypeEstimateGas(params map[string]interface{}) (uint64, error)
-	EthereumTypeGetErc20ContractInfo(contractDesc AddressDescriptor) (*Erc20Contract, error)
-	EthereumTypeGetErc20ContractBalance(addrDesc, contractDesc AddressDescriptor) (*big.Int, error)
 }
 
 // BlockChainParser defines common interface to parsing and conversions of block chain data
@@ -315,8 +288,6 @@ type BlockChainParser interface {
 	PackBlockHash(hash string) ([]byte, error)
 	UnpackBlockHash(buf []byte) (string, error)
 	ParseBlock(b []byte) (*Block, error)
-	// EthereumType specific
-	EthereumTypeGetErc20FromTx(tx *Tx) ([]Erc20Transfer, error)
 }
 
 // Mempool defines common interface to mempool

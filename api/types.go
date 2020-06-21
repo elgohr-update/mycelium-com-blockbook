@@ -135,9 +135,6 @@ type Vout struct {
 // TokenType specifies type of token
 type TokenType string
 
-// ERC20TokenType is Ethereum ERC20 token
-const ERC20TokenType TokenType = "ERC20"
-
 // XPUBAddressTokenType is address derived from xpub
 const XPUBAddressTokenType TokenType = "XPUBAddress"
 
@@ -168,16 +165,6 @@ type TokenTransfer struct {
 	Value    *Amount   `json:"value"`
 }
 
-// EthereumSpecific contains ethereum specific transaction data
-type EthereumSpecific struct {
-	Status   int      `json:"status"` // 1 OK, 0 Fail, -1 pending
-	Nonce    uint64   `json:"nonce"`
-	GasLimit *big.Int `json:"gasLimit"`
-	GasUsed  *big.Int `json:"gasUsed"`
-	GasPrice *Amount  `json:"gasPrice"`
-	Data     string   `json:"data,omitempty"`
-}
-
 // Tx holds information about a transaction
 type Tx struct {
 	Txid             string            `json:"txid"`
@@ -198,7 +185,6 @@ type Tx struct {
 	CoinSpecificData interface{}       `json:"-"`
 	CoinSpecificJSON json.RawMessage   `json:"-"`
 	TokenTransfers   []TokenTransfer   `json:"tokenTransfers,omitempty"`
-	EthereumSpecific *EthereumSpecific `json:"ethereumSpecific,omitempty"`
 }
 
 // FeeStats contains detailed block fee statistics
@@ -264,9 +250,9 @@ type Address struct {
 	Nonce                 string                `json:"nonce,omitempty"`
 	UsedTokens            int                   `json:"usedTokens,omitempty"`
 	Tokens                []Token               `json:"tokens,omitempty"`
-	Erc20Contract         *bchain.Erc20Contract `json:"erc20Contract,omitempty"`
 	// helpers for explorer
 	Filter        string              `json:"-"`
+
 	XPubAddresses map[string]struct{} `json:"-"`
 }
 

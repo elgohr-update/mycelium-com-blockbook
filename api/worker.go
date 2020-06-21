@@ -15,7 +15,6 @@ import (
 	"github.com/golang/glog"
 	"github.com/juju/errors"
 	"github.com/nbcorg/blockbook/bchain"
-	"github.com/nbcorg/blockbook/bchain/coins/eth"
 	"github.com/nbcorg/blockbook/common"
 	"github.com/nbcorg/blockbook/db"
 )
@@ -126,7 +125,6 @@ func (w *Worker) GetTransactionFromBchainTx(bchainTx *bchain.Tx, height int, spe
 	var err error
 	var ta *db.TxAddresses
 	var tokens []TokenTransfer
-	var ethSpecific *EthereumSpecific
 	var blockhash string
 	if bchainTx.Confirmations > 0 {
 		if w.chainType == bchain.ChainBitcoinType {
@@ -208,15 +206,6 @@ func (w *Worker) GetTransactionFromBchainTx(bchainTx *bchain.Tx, height int, spe
 					valInSat.Add(&valInSat, (*big.Int)(vin.ValueSat))
 				}
 			}
-		} else if w.chainType == bchain.ChainEthereumType {
-			if len(bchainVin.Addresses) > 0 {
-				vin.AddrDesc, err = w.chainParser.GetAddrDescFromAddress(bchainVin.Addresses[0])
-				if err != nil {
-					glog.Errorf("GetAddrDescFromAddress error %v, tx %v, bchainVin %v", err, bchainTx.Txid, bchainVin)
-				}
-				vin.Addresses = bchainVin.Addresses
-				vin.IsAddress = true
-			}
 		}
 	}
 	vouts := make([]Vout, len(bchainTx.Vout))
@@ -248,28 +237,6 @@ func (w *Worker) GetTransactionFromBchainTx(bchainTx *bchain.Tx, height int, spe
 			feesSat.SetUint64(0)
 		}
 		pValInSat = &valInSat
-	} else if w.chainType == bchain.ChainEthereumType {
-		ets, err := w.chainParser.EthereumTypeGetErc20FromTx(bchainTx)
-		if err != nil {
-			glog.Errorf("GetErc20FromTx error %v, %v", err, bchainTx)
-		}
-		tokens = w.getTokensFromErc20(ets)
-		ethTxData := eth.GetEthereumTxData(bchainTx)
-		// mempool txs do not have fees yet
-		if ethTxData.GasUsed != nil {
-			feesSat.Mul(ethTxData.GasPrice, ethTxData.GasUsed)
-		}
-		if len(bchainTx.Vout) > 0 {
-			valOutSat = bchainTx.Vout[0].ValueSat
-		}
-		ethSpecific = &EthereumSpecific{
-			GasLimit: ethTxData.GasLimit,
-			GasPrice: (*Amount)(ethTxData.GasPrice),
-			GasUsed:  ethTxData.GasUsed,
-			Nonce:    ethTxData.Nonce,
-			Status:   ethTxData.Status,
-			Data:     ethTxData.Data,
-		}
 	}
 	// for now do not return size, we would have to compute vsize of segwit transactions
 	// size:=len(bchainTx.Hex) / 2
@@ -302,7 +269,6 @@ func (w *Worker) GetTransactionFromBchainTx(bchainTx *bchain.Tx, height int, spe
 		CoinSpecificData: bchainTx.CoinSpecificData,
 		CoinSpecificJSON: sj,
 		TokenTransfers:   tokens,
-		EthereumSpecific: ethSpecific,
 	}
 	return r, nil
 }
@@ -314,7 +280,6 @@ func (w *Worker) GetTransactionFromMempoolTx(mempoolTx *bchain.MempoolTx) (*Tx, 
 	var valInSat, valOutSat, feesSat big.Int
 	var pValInSat *big.Int
 	var tokens []TokenTransfer
-	var ethSpecific *EthereumSpecific
 	vins := make([]Vin, len(mempoolTx.Vin))
 	rbf := false
 	for i := range mempoolTx.Vin {
@@ -340,15 +305,6 @@ func (w *Worker) GetTransactionFromMempoolTx(mempoolTx *bchain.MempoolTx) (*Tx, 
 					valInSat.Add(&valInSat, (*big.Int)(vin.ValueSat))
 				}
 			}
-		} else if w.chainType == bchain.ChainEthereumType {
-			if len(bchainVin.Addresses) > 0 {
-				vin.AddrDesc, err = w.chainParser.GetAddrDescFromAddress(bchainVin.Addresses[0])
-				if err != nil {
-					glog.Errorf("GetAddrDescFromAddress error %v, tx %v, bchainVin %v", err, mempoolTx.Txid, bchainVin)
-				}
-				vin.Addresses = bchainVin.Addresses
-				vin.IsAddress = true
-			}
 		}
 	}
 	vouts := make([]Vout, len(mempoolTx.Vout))
@@ -371,20 +327,6 @@ func (w *Worker) GetTransactionFromMempoolTx(mempoolTx *bchain.MempoolTx) (*Tx, 
 			feesSat.SetUint64(0)
 		}
 		pValInSat = &valInSat
-	} else if w.chainType == bchain.ChainEthereumType {
-		if len(mempoolTx.Vout) > 0 {
-			valOutSat = mempoolTx.Vout[0].ValueSat
-		}
-		tokens = w.getTokensFromErc20(mempoolTx.Erc20)
-		ethTxData := eth.GetEthereumTxDataFromSpecificData(mempoolTx.CoinSpecificData)
-		ethSpecific = &EthereumSpecific{
-			GasLimit: ethTxData.GasLimit,
-			GasPrice: (*Amount)(ethTxData.GasPrice),
-			GasUsed:  ethTxData.GasUsed,
-			Nonce:    ethTxData.Nonce,
-			Status:   ethTxData.Status,
-			Data:     ethTxData.Data,
-		}
 	}
 	r := &Tx{
 		Blocktime:        mempoolTx.Blocktime,
@@ -399,39 +341,8 @@ func (w *Worker) GetTransactionFromMempoolTx(mempoolTx *bchain.MempoolTx) (*Tx, 
 		Vin:              vins,
 		Vout:             vouts,
 		TokenTransfers:   tokens,
-		EthereumSpecific: ethSpecific,
 	}
 	return r, nil
-}
-
-func (w *Worker) getTokensFromErc20(erc20 []bchain.Erc20Transfer) []TokenTransfer {
-	tokens := make([]TokenTransfer, len(erc20))
-	for i := range erc20 {
-		e := &erc20[i]
-		cd, err := w.chainParser.GetAddrDescFromAddress(e.Contract)
-		if err != nil {
-			glog.Errorf("GetAddrDescFromAddress error %v, contract %v", err, e.Contract)
-			continue
-		}
-		erc20c, err := w.chain.EthereumTypeGetErc20ContractInfo(cd)
-		if err != nil {
-			glog.Errorf("GetErc20ContractInfo error %v, contract %v", err, e.Contract)
-		}
-		if erc20c == nil {
-			erc20c = &bchain.Erc20Contract{Name: e.Contract}
-		}
-		tokens[i] = TokenTransfer{
-			Type:     ERC20TokenType,
-			Token:    e.Contract,
-			From:     e.From,
-			To:       e.To,
-			Decimals: erc20c.Decimals,
-			Value:    (*Amount)(&e.Tokens),
-			Name:     erc20c.Name,
-			Symbol:   erc20c.Symbol,
-		}
-	}
-	return tokens
 }
 
 func (w *Worker) getAddressTxids(addrDesc bchain.AddressDescriptor, mempool bool, filter *AddressFilter, maxResults int) ([]string, error) {
@@ -499,19 +410,6 @@ func (t *Tx) getAddrVoutValue(addrDesc bchain.AddressDescriptor) *big.Int {
 	for _, vout := range t.Vout {
 		if bytes.Equal(vout.AddrDesc, addrDesc) && vout.ValueSat != nil {
 			val.Add(&val, (*big.Int)(vout.ValueSat))
-		}
-	}
-	return &val
-}
-func (t *Tx) getAddrEthereumTypeMempoolInputValue(addrDesc bchain.AddressDescriptor) *big.Int {
-	var val big.Int
-	if len(t.Vin) > 0 && len(t.Vout) > 0 && bytes.Equal(t.Vin[0].AddrDesc, addrDesc) {
-		val.Add(&val, (*big.Int)(t.Vout[0].ValueSat))
-		// add maximum possible fee (the used value is not yet known)
-		if t.EthereumSpecific != nil && t.EthereumSpecific.GasLimit != nil && t.EthereumSpecific.GasPrice != nil {
-			var fees big.Int
-			fees.Mul((*big.Int)(t.EthereumSpecific.GasPrice), t.EthereumSpecific.GasLimit)
-			val.Add(&val, &fees)
 		}
 	}
 	return &val
@@ -612,140 +510,6 @@ func computePaging(count, page, itemsOnPage int) (Paging, int, int, int) {
 	}, from, to, page
 }
 
-func (w *Worker) getEthereumToken(index int, addrDesc, contract bchain.AddressDescriptor, details AccountDetails, txs int) (*Token, error) {
-	var b *big.Int
-	validContract := true
-	ci, err := w.chain.EthereumTypeGetErc20ContractInfo(contract)
-	if err != nil {
-		return nil, errors.Annotatef(err, "EthereumTypeGetErc20ContractInfo %v", contract)
-	}
-	if ci == nil {
-		ci = &bchain.Erc20Contract{}
-		addresses, _, _ := w.chainParser.GetAddressesFromAddrDesc(contract)
-		if len(addresses) > 0 {
-			ci.Contract = addresses[0]
-			ci.Name = addresses[0]
-		}
-		validContract = false
-	}
-	// do not read contract balances etc in case of Basic option
-	if details >= AccountDetailsTokenBalances && validContract {
-		b, err = w.chain.EthereumTypeGetErc20ContractBalance(addrDesc, contract)
-		if err != nil {
-			// return nil, nil, nil, errors.Annotatef(err, "EthereumTypeGetErc20ContractBalance %v %v", addrDesc, c.Contract)
-			glog.Warningf("EthereumTypeGetErc20ContractBalance addr %v, contract %v, %v", addrDesc, contract, err)
-		}
-	} else {
-		b = nil
-	}
-	return &Token{
-		Type:          ERC20TokenType,
-		BalanceSat:    (*Amount)(b),
-		Contract:      ci.Contract,
-		Name:          ci.Name,
-		Symbol:        ci.Symbol,
-		Transfers:     txs,
-		Decimals:      ci.Decimals,
-		ContractIndex: strconv.Itoa(index),
-	}, nil
-}
-
-func (w *Worker) getEthereumTypeAddressBalances(addrDesc bchain.AddressDescriptor, details AccountDetails, filter *AddressFilter) (*db.AddrBalance, []Token, *bchain.Erc20Contract, uint64, int, int, error) {
-	var (
-		ba             *db.AddrBalance
-		tokens         []Token
-		ci             *bchain.Erc20Contract
-		n              uint64
-		nonContractTxs int
-	)
-	// unknown number of results for paging
-	totalResults := -1
-	ca, err := w.db.GetAddrDescContracts(addrDesc)
-	if err != nil {
-		return nil, nil, nil, 0, 0, 0, NewAPIError(fmt.Sprintf("Address not found, %v", err), true)
-	}
-	b, err := w.chain.EthereumTypeGetBalance(addrDesc)
-	if err != nil {
-		return nil, nil, nil, 0, 0, 0, errors.Annotatef(err, "EthereumTypeGetBalance %v", addrDesc)
-	}
-	if ca != nil {
-		ba = &db.AddrBalance{
-			Txs: uint32(ca.TotalTxs),
-		}
-		if b != nil {
-			ba.BalanceSat = *b
-		}
-		n, err = w.chain.EthereumTypeGetNonce(addrDesc)
-		if err != nil {
-			return nil, nil, nil, 0, 0, 0, errors.Annotatef(err, "EthereumTypeGetNonce %v", addrDesc)
-		}
-		var filterDesc bchain.AddressDescriptor
-		if filter.Contract != "" {
-			filterDesc, err = w.chainParser.GetAddrDescFromAddress(filter.Contract)
-			if err != nil {
-				return nil, nil, nil, 0, 0, 0, NewAPIError(fmt.Sprintf("Invalid contract filter, %v", err), true)
-			}
-		}
-		if details > AccountDetailsBasic {
-			tokens = make([]Token, len(ca.Contracts))
-			var j int
-			for i, c := range ca.Contracts {
-				if len(filterDesc) > 0 {
-					if !bytes.Equal(filterDesc, c.Contract) {
-						continue
-					}
-					// filter only transactions of this contract
-					filter.Vout = i + 1
-				}
-				t, err := w.getEthereumToken(i+1, addrDesc, c.Contract, details, int(c.Txs))
-				if err != nil {
-					return nil, nil, nil, 0, 0, 0, err
-				}
-				tokens[j] = *t
-				j++
-			}
-			// special handling if filter has contract
-			// if the address has no transactions with given contract, check the balance, the address may have some balance even without transactions
-			if len(filterDesc) > 0 && j == 0 && details >= AccountDetailsTokens {
-				t, err := w.getEthereumToken(0, addrDesc, filterDesc, details, 0)
-				if err != nil {
-					return nil, nil, nil, 0, 0, 0, err
-				}
-				tokens = []Token{*t}
-				// switch off query for transactions, there are no transactions
-				filter.Vout = AddressFilterVoutQueryNotNecessary
-			} else {
-				tokens = tokens[:j]
-			}
-		}
-		ci, err = w.chain.EthereumTypeGetErc20ContractInfo(addrDesc)
-		if err != nil {
-			return nil, nil, nil, 0, 0, 0, err
-		}
-		if filter.FromHeight == 0 && filter.ToHeight == 0 {
-			// compute total results for paging
-			if filter.Vout == AddressFilterVoutOff {
-				totalResults = int(ca.TotalTxs)
-			} else if filter.Vout == 0 {
-				totalResults = int(ca.NonContractTxs)
-			} else if filter.Vout > 0 && filter.Vout-1 < len(ca.Contracts) {
-				totalResults = int(ca.Contracts[filter.Vout-1].Txs)
-			} else if filter.Vout == AddressFilterVoutQueryNotNecessary {
-				totalResults = 0
-			}
-		}
-		nonContractTxs = int(ca.NonContractTxs)
-	} else {
-		// addresses without any normal transactions can have internal transactions and therefore balance
-		if b != nil {
-			ba = &db.AddrBalance{
-				BalanceSat: *b,
-			}
-		}
-	}
-	return ba, tokens, ci, n, nonContractTxs, totalResults, nil
-}
-
 func (w *Worker) txFromTxid(txid string, bestheight uint32, option AccountDetails, blockInfo *db.BlockInfo) (*Tx, error) {
 	var tx *Tx
 	var err error
@@ -816,7 +580,6 @@ func (w *Worker) GetAddress(address string, page int, txsOnPage int, option Acco
 	var (
 		ba                       *db.AddrBalance
 		tokens                   []Token
-		erc20c                   *bchain.Erc20Contract
 		txm                      []string
 		txs                      []*Tx
 		txids                    []string
@@ -832,26 +595,17 @@ func (w *Worker) GetAddress(address string, page int, txsOnPage int, option Acco
 	if err != nil {
 		return nil, err
 	}
-	if w.chainType == bchain.ChainEthereumType {
-		var n uint64
-		ba, tokens, erc20c, n, nonTokenTxs, totalResults, err = w.getEthereumTypeAddressBalances(addrDesc, option, filter)
-		if err != nil {
-			return nil, err
-		}
-		nonce = strconv.Itoa(int(n))
-	} else {
-		// ba can be nil if the address is only in mempool!
-		ba, err = w.db.GetAddrDescBalance(addrDesc, db.AddressBalanceDetailNoUTXO)
-		if err != nil {
-			return nil, NewAPIError(fmt.Sprintf("Address not found, %v", err), true)
-		}
-		if ba != nil {
-			// totalResults is known only if there is no filter
-			if filter.Vout == AddressFilterVoutOff && filter.FromHeight == 0 && filter.ToHeight == 0 {
-				totalResults = int(ba.Txs)
-			} else {
-				totalResults = -1
-			}
+	// ba can be nil if the address is only in mempool!
+	ba, err = w.db.GetAddrDescBalance(addrDesc, db.AddressBalanceDetailNoUTXO)
+	if err != nil {
+		return nil, NewAPIError(fmt.Sprintf("Address not found, %v", err), true)
+	}
+	if ba != nil {
+		// totalResults is known only if there is no filter
+		if filter.Vout == AddressFilterVoutOff && filter.FromHeight == 0 && filter.ToHeight == 0 {
+			totalResults = int(ba.Txs)
+		} else {
+			totalResults = -1
 		}
 	}
 	// if there are only unconfirmed transactions, there is no paging
@@ -875,12 +629,7 @@ func (w *Worker) GetAddress(address string, page int, txsOnPage int, option Acco
 				if tx.Confirmations == 0 {
 					unconfirmedTxs++
 					uBalSat.Add(&uBalSat, tx.getAddrVoutValue(addrDesc))
-					// ethereum has a different logic - value not in input and add maximum possible fees
-					if w.chainType == bchain.ChainEthereumType {
-						uBalSat.Sub(&uBalSat, tx.getAddrEthereumTypeMempoolInputValue(addrDesc))
-					} else {
-						uBalSat.Sub(&uBalSat, tx.getAddrVinValue(addrDesc))
-					}
+					uBalSat.Sub(&uBalSat, tx.getAddrVinValue(addrDesc))
 					if page == 0 {
 						if option == AccountDetailsTxidHistory {
 							txids = append(txids, tx.Txid)
@@ -941,7 +690,6 @@ func (w *Worker) GetAddress(address string, page int, txsOnPage int, option Acco
 		Transactions:          txs,
 		Txids:                 txids,
 		Tokens:                tokens,
-		Erc20Contract:         erc20c,
 		Nonce:                 nonce,
 	}
 	glog.Info("GetAddress ", address, " finished in ", time.Since(start))
@@ -968,7 +716,6 @@ func (w *Worker) balanceHistoryForTxid(addrDesc bchain.AddressDescriptor, txid s
 	var time uint32
 	var err error
 	var ta *db.TxAddresses
-	var bchainTx *bchain.Tx
 	var height uint32
 	if w.chainType == bchain.ChainBitcoinType {
 		ta, err = w.db.GetTxAddresses(txid)
@@ -980,17 +727,6 @@ func (w *Worker) balanceHistoryForTxid(addrDesc bchain.AddressDescriptor, txid s
 			return nil, nil
 		}
 		height = ta.Height
-	} else if w.chainType == bchain.ChainEthereumType {
-		var h int
-		bchainTx, h, err = w.txCache.GetTransaction(txid)
-		if err != nil {
-			return nil, err
-		}
-		if bchainTx == nil {
-			glog.Warning("Inconsistency:  tx ", txid, ": not found in the blockchain")
-			return nil, nil
-		}
-		height = uint32(h)
 	}
 	time = w.is.GetBlockTime(height)
 	if time < fromUnix || time >= toUnix {
@@ -1031,54 +767,6 @@ func (w *Worker) balanceHistoryForTxid(addrDesc bchain.AddressDescriptor, txid s
 			if countSentToSelf {
 				if _, found := selfAddrDesc[string(tao.AddrDesc)]; found {
 					(*big.Int)(bh.SentToSelfSat).Add((*big.Int)(bh.SentToSelfSat), &tao.ValueSat)
-				}
-			}
-		}
-	} else if w.chainType == bchain.ChainEthereumType {
-		var value big.Int
-		ethTxData := eth.GetEthereumTxData(bchainTx)
-		// add received amount only for OK transactions
-		if ethTxData.Status == 1 {
-			if len(bchainTx.Vout) > 0 {
-				bchainVout := &bchainTx.Vout[0]
-				value = bchainVout.ValueSat
-				if len(bchainVout.ScriptPubKey.Addresses) > 0 {
-					txAddrDesc, err := w.chainParser.GetAddrDescFromAddress(bchainVout.ScriptPubKey.Addresses[0])
-					if err != nil {
-						return nil, err
-					}
-					if bytes.Equal(addrDesc, txAddrDesc) {
-						(*big.Int)(bh.ReceivedSat).Add((*big.Int)(bh.ReceivedSat), &value)
-					}
-					if _, found := selfAddrDesc[string(txAddrDesc)]; found {
-						countSentToSelf = true
-					}
-				}
-			}
-		}
-		for i := range bchainTx.Vin {
-			bchainVin := &bchainTx.Vin[i]
-			if len(bchainVin.Addresses) > 0 {
-				txAddrDesc, err := w.chainParser.GetAddrDescFromAddress(bchainVin.Addresses[0])
-				if err != nil {
-					return nil, err
-				}
-				if bytes.Equal(addrDesc, txAddrDesc) {
-					// add sent amount only for OK transactions, however fees always
-					if ethTxData.Status == 1 {
-						(*big.Int)(bh.SentSat).Add((*big.Int)(bh.SentSat), &value)
-						if countSentToSelf {
-							if _, found := selfAddrDesc[string(txAddrDesc)]; found {
-								(*big.Int)(bh.SentToSelfSat).Add((*big.Int)(bh.SentToSelfSat), &value)
-							}
-						}
-					}
-					var feesSat big.Int
-					// mempool txs do not have fees yet
-					if ethTxData.GasUsed != nil {
-						feesSat.Mul(ethTxData.GasPrice, ethTxData.GasUsed)
-					}
-					(*big.Int)(bh.SentSat).Add((*big.Int)(bh.SentSat), &feesSat)
 				}
 			}
 		}

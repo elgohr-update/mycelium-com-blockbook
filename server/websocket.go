@@ -5,7 +5,6 @@ import (
 	"math/big"
 	"net/http"
 	"runtime/debug"
-	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -558,53 +557,36 @@ func (s *WebsocketServer) estimateFee(c *websocketChannel, params []byte) (inter
 		return nil, err
 	}
 	res := make([]estimateFeeRes, len(r.Blocks))
-	if s.chainParser.GetChainType() == bchain.ChainEthereumType {
-		gas, err := s.chain.EthereumTypeEstimateGas(r.Specific)
+	conservative := true
+	v, ok := r.Specific["conservative"]
+	if ok {
+		vc, ok := v.(bool)
+		if ok {
+			conservative = vc
+		}
+	}
+	txSize := 0
+	v, ok = r.Specific["txsize"]
+	if ok {
+		f, ok := v.(float64)
+		if ok {
+			txSize = int(f)
+		}
+	}
+	for i, b := range r.Blocks {
+		fee, err := s.chain.EstimateSmartFee(b, conservative)
 		if err != nil {
 			return nil, err
 		}
-		sg := strconv.FormatUint(gas, 10)
-		for i, b := range r.Blocks {
-			fee, err := s.chain.EstimateSmartFee(b, true)
-			if err != nil {
-				return nil, err
-			}
-			res[i].FeePerUnit = fee.String()
-			res[i].FeeLimit = sg
-			fee.Mul(&fee, new(big.Int).SetUint64(gas))
+		res[i].FeePerUnit = fee.String()
+		if txSize > 0 {
+			fee.Mul(&fee, big.NewInt(int64(txSize)))
+			fee.Add(&fee, big.NewInt(500))
+			fee.Div(&fee, big.NewInt(1000))
 			res[i].FeePerTx = fee.String()
 		}
-	} else {
-		conservative := true
-		v, ok := r.Specific["conservative"]
-		if ok {
-			vc, ok := v.(bool)
-			if ok {
-				conservative = vc
-			}
-		}
-		txSize := 0
-		v, ok = r.Specific["txsize"]
-		if ok {
-			f, ok := v.(float64)
-			if ok {
-				txSize = int(f)
-			}
-		}
-		for i, b := range r.Blocks {
-			fee, err := s.chain.EstimateSmartFee(b, conservative)
-			if err != nil {
-				return nil, err
-			}
-			res[i].FeePerUnit = fee.String()
-			if txSize > 0 {
-				fee.Mul(&fee, big.NewInt(int64(txSize)))
-				fee.Add(&fee, big.NewInt(500))
-				fee.Div(&fee, big.NewInt(1000))
-				res[i].FeePerTx = fee.String()
-			}
-		}
 	}
+
 	return res, nil
 }
 
@@ -804,24 +786,7 @@ func (s *WebsocketServer) OnNewTx(tx *bchain.MempoolTx) {
 			}
 		}
 	}
-	for i := range tx.Erc20 {
-		addrDesc, err := s.chainParser.GetAddrDescFromAddress(tx.Erc20[i].From)
-		if err == nil && len(addrDesc) > 0 {
-			sad := string(addrDesc)
-			as, ok := s.addressSubscriptions[sad]
-			if ok && len(as) > 0 {
-				subscribed[sad] = struct{}{}
-			}
-		}
-		addrDesc, err = s.chainParser.GetAddrDescFromAddress(tx.Erc20[i].To)
-		if err == nil && len(addrDesc) > 0 {
-			sad := string(addrDesc)
-			as, ok := s.addressSubscriptions[sad]
-			if ok && len(as) > 0 {
-				subscribed[sad] = struct{}{}
-			}
-		}
-	}
+
 	s.addressSubscriptionsLock.Unlock()
 	if len(subscribed) > 0 {
 		atx, err := s.api.GetTransactionFromMempoolTx(tx)

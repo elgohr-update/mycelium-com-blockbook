@@ -11,44 +11,8 @@ import (
 
 	"github.com/juju/errors"
 	"github.com/nbcorg/blockbook/bchain"
-	"github.com/nbcorg/blockbook/bchain/coins/bch"
-	"github.com/nbcorg/blockbook/bchain/coins/bellcoin"
-	"github.com/nbcorg/blockbook/bchain/coins/bitcore"
-	"github.com/nbcorg/blockbook/bchain/coins/bitzeny"
 	"github.com/nbcorg/blockbook/bchain/coins/btc"
-	"github.com/nbcorg/blockbook/bchain/coins/btg"
-	"github.com/nbcorg/blockbook/bchain/coins/cpuchain"
-	"github.com/nbcorg/blockbook/bchain/coins/dash"
-	"github.com/nbcorg/blockbook/bchain/coins/deeponion"
-	"github.com/nbcorg/blockbook/bchain/coins/digibyte"
-	"github.com/nbcorg/blockbook/bchain/coins/divi"
-	"github.com/nbcorg/blockbook/bchain/coins/dogecoin"
-	"github.com/nbcorg/blockbook/bchain/coins/eth"
-	"github.com/nbcorg/blockbook/bchain/coins/flo"
-	"github.com/nbcorg/blockbook/bchain/coins/fujicoin"
-	"github.com/nbcorg/blockbook/bchain/coins/gamecredits"
-	"github.com/nbcorg/blockbook/bchain/coins/koto"
-	"github.com/nbcorg/blockbook/bchain/coins/liquid"
-	"github.com/nbcorg/blockbook/bchain/coins/litecoin"
-	"github.com/nbcorg/blockbook/bchain/coins/monacoin"
-	"github.com/nbcorg/blockbook/bchain/coins/monetaryunit"
-	"github.com/nbcorg/blockbook/bchain/coins/myriad"
-	"github.com/nbcorg/blockbook/bchain/coins/namecoin"
-	"github.com/nbcorg/blockbook/bchain/coins/nuls"
-	"github.com/nbcorg/blockbook/bchain/coins/omotenashicoin"
-	"github.com/nbcorg/blockbook/bchain/coins/pivx"
-	"github.com/nbcorg/blockbook/bchain/coins/polis"
-	"github.com/nbcorg/blockbook/bchain/coins/qtum"
-	"github.com/nbcorg/blockbook/bchain/coins/ravencoin"
-	"github.com/nbcorg/blockbook/bchain/coins/ritocoin"
 	"github.com/nbcorg/blockbook/bchain/coins/russianbitcoin"
-	"github.com/nbcorg/blockbook/bchain/coins/snowgem"
-	"github.com/nbcorg/blockbook/bchain/coins/unobtanium"
-	"github.com/nbcorg/blockbook/bchain/coins/vertcoin"
-	"github.com/nbcorg/blockbook/bchain/coins/viacoin"
-	"github.com/nbcorg/blockbook/bchain/coins/vipstarcoin"
-	"github.com/nbcorg/blockbook/bchain/coins/xzc"
-	"github.com/nbcorg/blockbook/bchain/coins/zec"
 	"github.com/nbcorg/blockbook/common"
 )
 
@@ -59,58 +23,7 @@ var BlockChainFactories = make(map[string]blockChainFactory)
 
 func init() {
 	BlockChainFactories["Bitcoin"] = btc.NewBitcoinRPC
-	BlockChainFactories["Testnet"] = btc.NewBitcoinRPC
-	BlockChainFactories["Zcash"] = zec.NewZCashRPC
-	BlockChainFactories["Zcash Testnet"] = zec.NewZCashRPC
-	BlockChainFactories["Ethereum"] = eth.NewEthereumRPC
-	BlockChainFactories["Ethereum Classic"] = eth.NewEthereumRPC
-	BlockChainFactories["Ethereum Testnet Ropsten"] = eth.NewEthereumRPC
-	BlockChainFactories["Bcash"] = bch.NewBCashRPC
-	BlockChainFactories["Bcash Testnet"] = bch.NewBCashRPC
-	BlockChainFactories["Bgold"] = btg.NewBGoldRPC
-	BlockChainFactories["Dash"] = dash.NewDashRPC
-	BlockChainFactories["Dash Testnet"] = dash.NewDashRPC
-	BlockChainFactories["GameCredits"] = gamecredits.NewGameCreditsRPC
-	BlockChainFactories["Koto"] = koto.NewKotoRPC
-	BlockChainFactories["Koto Testnet"] = koto.NewKotoRPC
-	BlockChainFactories["Litecoin"] = litecoin.NewLitecoinRPC
-	BlockChainFactories["Litecoin Testnet"] = litecoin.NewLitecoinRPC
-	BlockChainFactories["Dogecoin"] = dogecoin.NewDogecoinRPC
-	BlockChainFactories["Vertcoin"] = vertcoin.NewVertcoinRPC
-	BlockChainFactories["Vertcoin Testnet"] = vertcoin.NewVertcoinRPC
-	BlockChainFactories["Namecoin"] = namecoin.NewNamecoinRPC
-	BlockChainFactories["Monacoin"] = monacoin.NewMonacoinRPC
-	BlockChainFactories["Monacoin Testnet"] = monacoin.NewMonacoinRPC
-	BlockChainFactories["MonetaryUnit"] = monetaryunit.NewMonetaryUnitRPC
-	BlockChainFactories["DigiByte"] = digibyte.NewDigiByteRPC
-	BlockChainFactories["DigiByte Testnet"] = digibyte.NewDigiByteRPC
-	BlockChainFactories["Myriad"] = myriad.NewMyriadRPC
-	BlockChainFactories["Liquid"] = liquid.NewLiquidRPC
-	BlockChainFactories["PIVX"] = pivx.NewPivXRPC
-	BlockChainFactories["PIVX Testnet"] = pivx.NewPivXRPC
-	BlockChainFactories["Polis"] = polis.NewPolisRPC
-	BlockChainFactories["Zcoin"] = xzc.NewZcoinRPC
-	BlockChainFactories["Fujicoin"] = fujicoin.NewFujicoinRPC
-	BlockChainFactories["Flo"] = flo.NewFloRPC
-	BlockChainFactories["Bellcoin"] = bellcoin.NewBellcoinRPC
-	BlockChainFactories["Qtum"] = qtum.NewQtumRPC
-	BlockChainFactories["Viacoin"] = viacoin.NewViacoinRPC
-	BlockChainFactories["Qtum Testnet"] = qtum.NewQtumRPC
-	BlockChainFactories["NULS"] = nuls.NewNulsRPC
-	BlockChainFactories["VIPSTARCOIN"] = vipstarcoin.NewVIPSTARCOINRPC
-	BlockChainFactories["ZelCash"] = zec.NewZCashRPC
-	BlockChainFactories["Ravencoin"] = ravencoin.NewRavencoinRPC
-	BlockChainFactories["Ritocoin"] = ritocoin.NewRitocoinRPC
 	BlockChainFactories["RussianBitcoin"] = russianbitcoin.NewRussianBitcoinRPC
-	BlockChainFactories["Divi"] = divi.NewDiviRPC
-	BlockChainFactories["CPUchain"] = cpuchain.NewCPUchainRPC
-	BlockChainFactories["Unobtanium"] = unobtanium.NewUnobtaniumRPC
-	BlockChainFactories["DeepOnion"] = deeponion.NewDeepOnionRPC
-	BlockChainFactories["SnowGem"] = snowgem.NewSnowGemRPC
-	BlockChainFactories["Bitcore"] = bitcore.NewBitcoreRPC
-	BlockChainFactories["Omotenashicoin"] = omotenashicoin.NewOmotenashiCoinRPC
-	BlockChainFactories["Omotenashicoin Testnet"] = omotenashicoin.NewOmotenashiCoinRPC
-	BlockChainFactories["BitZeny"] = bitzeny.NewBitZenyRPC
 }
 
 // GetCoinNameFromConfig gets coin name and coin shortcut from config file
@@ -283,31 +196,6 @@ func (c *blockChainWithMetrics) GetMempoolEntry(txid string) (v *bchain.MempoolE
 
 func (c *blockChainWithMetrics) GetChainParser() bchain.BlockChainParser {
 	return c.b.GetChainParser()
-}
-
-func (c *blockChainWithMetrics) EthereumTypeGetBalance(addrDesc bchain.AddressDescriptor) (v *big.Int, err error) {
-	defer func(s time.Time) { c.observeRPCLatency("EthereumTypeGetBalance", s, err) }(time.Now())
-	return c.b.EthereumTypeGetBalance(addrDesc)
-}
-
-func (c *blockChainWithMetrics) EthereumTypeGetNonce(addrDesc bchain.AddressDescriptor) (v uint64, err error) {
-	defer func(s time.Time) { c.observeRPCLatency("EthereumTypeGetNonce", s, err) }(time.Now())
-	return c.b.EthereumTypeGetNonce(addrDesc)
-}
-
-func (c *blockChainWithMetrics) EthereumTypeEstimateGas(params map[string]interface{}) (v uint64, err error) {
-	defer func(s time.Time) { c.observeRPCLatency("EthereumTypeEstimateGas", s, err) }(time.Now())
-	return c.b.EthereumTypeEstimateGas(params)
-}
-
-func (c *blockChainWithMetrics) EthereumTypeGetErc20ContractInfo(contractDesc bchain.AddressDescriptor) (v *bchain.Erc20Contract, err error) {
-	defer func(s time.Time) { c.observeRPCLatency("EthereumTypeGetErc20ContractInfo", s, err) }(time.Now())
-	return c.b.EthereumTypeGetErc20ContractInfo(contractDesc)
-}
-
-func (c *blockChainWithMetrics) EthereumTypeGetErc20ContractBalance(addrDesc, contractDesc bchain.AddressDescriptor) (v *big.Int, err error) {
-	defer func(s time.Time) { c.observeRPCLatency("EthereumTypeGetErc20ContractInfo", s, err) }(time.Now())
-	return c.b.EthereumTypeGetErc20ContractBalance(addrDesc, contractDesc)
 }
 
 type mempoolWithMetrics struct {
