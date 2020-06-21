@@ -1213,11 +1213,12 @@ func (d *RocksDB) unpackNOutpoints(buf []byte) ([]outpoint, int, error) {
 
 // BlockInfo holds information about blocks kept in column height
 type BlockInfo struct {
-	Hash   string
-	Time   int64
-	Txs    uint32
-	Size   uint32
-	Height uint32 // Height is not packed!
+	Hash      string
+	PrintHash string // PrintHash is not packed
+	Time      int64
+	Txs       uint32
+	Size      uint32
+	Height    uint32 // Height is not packed!
 }
 
 func (d *RocksDB) packBlockInfo(block *BlockInfo) ([]byte, error) {
@@ -1260,6 +1261,7 @@ func (d *RocksDB) unpackBlockInfo(buf []byte) (*BlockInfo, error) {
 	size, _ := unpackVaruint(buf[pl+4+l:])
 	return &BlockInfo{
 		Hash: txid,
+		PrintHash: txid[12:],
 		Time: int64(t),
 		Txs:  uint32(txs),
 		Size: uint32(size),
