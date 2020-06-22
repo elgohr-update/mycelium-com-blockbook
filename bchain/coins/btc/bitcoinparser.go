@@ -7,6 +7,7 @@ import (
 	"math/big"
 	"strconv"
 
+	"github.com/juju/errors"
 	vlq "github.com/bsm/go-vlq"
 	"github.com/nbcorg/btcd/blockchain"
 	"github.com/nbcorg/btcd/wire"
@@ -104,6 +105,10 @@ func (p *BitcoinParser) GetAddrDescFromVout(output *bchain.Vout) (bchain.Address
 	ad, err := hex.DecodeString(output.ScriptPubKey.Hex)
 	if err != nil {
 		return ad, err
+	}
+	sc := txscript.GetScriptClass(ad)
+	if sc == txscript.NonStandardTy {
+		return ad, errors.New("Non-standard output script")
 	}
 	// convert possible P2PK script to P2PKH
 	// so that all transactions by given public key are indexed together
