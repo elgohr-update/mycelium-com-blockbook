@@ -99,12 +99,11 @@ github.com/modern-go/reflect2 v0.0.0-20180701023420-4b7aa43c6742/go.mod h1:bx2lN
 github.com/modern-go/reflect2 v1.0.1/go.mod h1:bx2lNnkwVCuqBIxFjflWJWanXIb3RllmbCylyMrvgv0=
 github.com/mr-tron/base58 v1.1.3/go.mod h1:BinMc/sQntlIE1frQmRFPUoPA1Zkr8VRgBdjWI2mNwc=
 github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
-github.com/nbcorg/bchutil v0.0.0-20200620193011-8d8f21707974/go.mod h1:98B47yBA/hIHCaxbIyY7BtAphxiQSh35haNMZ8Ze+84=
-github.com/nbcorg/btcd v0.0.0-20200622092126-4b050e3cea52 h1:UQRzsxfGAuVKasH+jIachNcRFzCpj4UmUDekSIyZOII=
-github.com/nbcorg/btcd v0.0.0-20200622092126-4b050e3cea52/go.mod h1:iwgoPrfjseGMz06btLpVpmjkZg/rors/x0NsRsTJI0g=
+github.com/nbcorg/btcd v0.0.0-20200622100515-fb447ec19336 h1:YD7YCjANr9M0Xk5CtLpUfuIUeMVBhVIX5lAueZFwHXw=
+github.com/nbcorg/btcd v0.0.0-20200622100515-fb447ec19336/go.mod h1:iwgoPrfjseGMz06btLpVpmjkZg/rors/x0NsRsTJI0g=
 github.com/nbcorg/btcutil v0.0.0-20180706230648-ab6388e0c60a/go.mod h1:6SeQTheYzLnh/qYSiZhNk0mmKNRNI1DGZY9TM7ov9Q8=
-github.com/nbcorg/btcutil v0.0.0-20200620224435-69fe05f32072 h1:xHpK7wJZRhHysC0eaSUg7cI8GRHW0McDomb9e1qWSGo=
-github.com/nbcorg/btcutil v0.0.0-20200620224435-69fe05f32072/go.mod h1:6SeQTheYzLnh/qYSiZhNk0mmKNRNI1DGZY9TM7ov9Q8=
+github.com/nbcorg/btcutil v0.0.0-20200622100647-a07deec9695c h1:389VbuU+NM1ID7Ls+JmPQjPRRaSV3y+HQoec7O1FNNg=
+github.com/nbcorg/btcutil v0.0.0-20200622100647-a07deec9695c/go.mod h1:6SeQTheYzLnh/qYSiZhNk0mmKNRNI1DGZY9TM7ov9Q8=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/ginkgo v1.7.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
