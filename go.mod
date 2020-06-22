@@ -9,11 +9,6 @@ require (
 	github.com/bsm/go-vlq v0.0.0-20150828105119-ec6e8d4f5f4e
 	github.com/btcsuite/btcd v0.20.1-beta // indirect
 	github.com/deckarep/golang-set v1.7.1
-	github.com/decred/dcrd/chaincfg v1.5.2
-	github.com/decred/dcrd/chaincfg/chainhash v1.0.2
-	github.com/decred/dcrd/dcrjson v1.2.0
-	github.com/decred/dcrd/hdkeychain v1.1.1
-	github.com/decred/dcrd/txscript v1.1.0
 	github.com/ethereum/go-ethereum v1.8.20
 	github.com/facebookgo/ensure v0.0.0-20200202191622-63f1cf65ac4c // indirect
 	github.com/facebookgo/stack v0.0.0-20160209184415-751773369052 // indirect
@@ -29,7 +24,7 @@ require (
 	github.com/martinboehm/golang-socketio v0.0.0-20180414165752-f60b0a8befde
 	github.com/mr-tron/base58 v1.1.3 // indirect
 	github.com/nbcorg/bchutil v0.0.0-20200620193011-8d8f21707974
-	github.com/nbcorg/btcd v0.0.0-20200620211556-4c8a3c1fa313
+	github.com/nbcorg/btcd v0.0.0-20200622092126-4b050e3cea52
 	github.com/nbcorg/btcutil v0.0.0-20200620224435-69fe05f32072
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/pebbe/zmq4 v1.0.0
