@@ -99,11 +99,13 @@ github.com/modern-go/reflect2 v0.0.0-20180701023420-4b7aa43c6742/go.mod h1:bx2lN
 github.com/modern-go/reflect2 v1.0.1/go.mod h1:bx2lNnkwVCuqBIxFjflWJWanXIb3RllmbCylyMrvgv0=
 github.com/mr-tron/base58 v1.1.3/go.mod h1:BinMc/sQntlIE1frQmRFPUoPA1Zkr8VRgBdjWI2mNwc=
 github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
-github.com/nbcorg/btcd v0.0.0-20200622100515-fb447ec19336 h1:YD7YCjANr9M0Xk5CtLpUfuIUeMVBhVIX5lAueZFwHXw=
-github.com/nbcorg/btcd v0.0.0-20200622100515-fb447ec19336/go.mod h1:iwgoPrfjseGMz06btLpVpmjkZg/rors/x0NsRsTJI0g=
-github.com/nbcorg/btcutil v0.0.0-20180706230648-ab6388e0c60a/go.mod h1:6SeQTheYzLnh/qYSiZhNk0mmKNRNI1DGZY9TM7ov9Q8=
-github.com/nbcorg/btcutil v0.0.0-20200622100647-a07deec9695c h1:389VbuU+NM1ID7Ls+JmPQjPRRaSV3y+HQoec7O1FNNg=
-github.com/nbcorg/btcutil v0.0.0-20200622100647-a07deec9695c/go.mod h1:6SeQTheYzLnh/qYSiZhNk0mmKNRNI1DGZY9TM7ov9Q8=
+github.com/nbcorg/btcd v0.0.0-20200622104354-8278322fe8f6 h1:wrz0tXUZ0C7Zm/9s2ZG8s/UTYUNjMpV2kVE1a+lgqM0=
+github.com/nbcorg/btcd v0.0.0-20200622104354-8278322fe8f6/go.mod h1:ty5NtlXpJECM33IVdmHBceQe2Qt144LbPuszNtPINao=
+github.com/nbcorg/btcd v0.0.0-20200622110527-39f473243192 h1:5qFQvU0d5X8JS47W9V0jXnuuTrr3rLaePfMLn2ZLe78=
+github.com/nbcorg/btcd v0.0.0-20200622110527-39f473243192/go.mod h1:haVWHOqmeNxcS7b4mjlRgCyPr2JZCZWMEflNEHYrGF0=
+github.com/nbcorg/btcutil v0.0.0-20200622103739-e2dd190f4660/go.mod h1:6SeQTheYzLnh/qYSiZhNk0mmKNRNI1DGZY9TM7ov9Q8=
+github.com/nbcorg/btcutil v0.0.0-20200622110405-a0487fcc8465 h1:Z8mQo/9sftppy2UZRFi/BdXtLC/ECzPAKKSJ7cYNAqY=
+github.com/nbcorg/btcutil v0.0.0-20200622110405-a0487fcc8465/go.mod h1:6SeQTheYzLnh/qYSiZhNk0mmKNRNI1DGZY9TM7ov9Q8=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/ginkgo v1.7.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
@@ -188,6 +190,7 @@ golang.org/x/sys v0.0.0-20190403152447-81d4e9dc473e/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20190422165155-953cdadca894/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20190801041406-cbf593c0f2f3/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20190912141932-bc967efca4b8 h1:41hwlulw1prEMBxLQSlMSux1zxJf07B3WPsdjJlKZxE=
 golang.org/x/sys v0.0.0-20190912141932-bc967efca4b8/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/time v0.0.0-20190308202827-9d24e82272b4/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
