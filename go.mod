@@ -23,8 +23,8 @@ require (
 	github.com/juju/testing v0.0.0-20191001232224-ce9dec17d28b // indirect
 	github.com/martinboehm/golang-socketio v0.0.0-20180414165752-f60b0a8befde
 	github.com/mr-tron/base58 v1.1.3 // indirect
-	github.com/nbcorg/btcd v0.0.0-20200622133330-8ba93b4a5029 // indirect
-	github.com/nbcorg/btcutil v0.0.0-20200622134603-a7df7966717d // indirect
+	github.com/nbcorg/btcd v0.0.0-20200622133330-8ba93b4a5029
+	github.com/nbcorg/btcutil v0.0.0-20201106055106-dcdcc4d0007a
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/pebbe/zmq4 v1.0.0
 	github.com/prometheus/client_golang v1.1.0
@@ -34,7 +34,8 @@ require (
 	github.com/schancel/cashaddr-converter v0.0.0-20180113210041-0a38f5822f79
 	github.com/syndtr/goleveldb v1.0.0 // indirect
 	github.com/tecbot/gorocksdb v0.0.0-20180907100951-214b6b7bc0f0
-	golang.org/x/crypto v0.0.0-20190927123631-a832865fa7ad
+	golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897
+	golang.org/x/sys v0.0.0-20201101102859-da207088b7d1 // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22 // indirect
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
